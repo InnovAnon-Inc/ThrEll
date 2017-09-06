@@ -374,7 +374,7 @@ typedef struct {
 static int exec_pipelinecb (fd_t *input, fd_t *rd, fd_t *wr,
 	bool first, bool last, void *cbargs) {
 	exec_pipelinecb_t *args = (exec_pipelinecb_t *) cbargs;
-	thclosure_t *argv = args->argv;
+	thservercb argv = args->argv;
 
 	fd_t *cmdinput = &stdinput;
 	fd_t *cmdoutput = &stdoutput;
