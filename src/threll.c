@@ -158,10 +158,10 @@ typedef struct {
 	fd_t *wr;
 	fd_t *rd;
 	bool last;
-	thread_t cpid;
+	pthread_t cpid;
 } parentcb2_t;
 
-static int parentcb (thread_t cpid, void *cbargs) {
+static int parentcb (pthread_t cpid, void *cbargs) {
 	parentcb2_t *args = (parentcb2_t *) cbargs;
 	fd_t *input = args->input;
 	fd_t *wr = args->wr;
@@ -221,8 +221,8 @@ typedef struct {
 
 int ezthork (
 	int (*childcb)  (void *),        void *childcb_args,
-	int (*parentcb) (thread_t, void *), void *parentcb_args) {
-	thread_t pid;
+	int (*parentcb) (pthread_t, void *), void *parentcb_args) {
+	pthread_t pid;
 
 	pthread_create (&pid, NULL, childcb, childcb_args);
 	if (parentcb (pid, parentcb_args) != 0)
@@ -300,7 +300,7 @@ int pipeline (pipeline_t cmds[], size_t ncmd) {
 	if (command (cmds + i, &input, first, true) != 0)
 		return -2;
 	for (i = 0; i != ncmd; i++) {
-		thread_t cpid = cmds[i].cpid;
+		pthread_t cpid = cmds[i].cpid;
 		if (pthread_join (cpid, NULL) != 0)
 			return -1;
 		/* free queue */
