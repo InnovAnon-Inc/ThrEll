@@ -8,11 +8,11 @@
 
 #include "threll.h"
 
-
+/*
 pipe_t stdpipe;
 fd_t stdinput;
 fd_t stdoutput;
-
+*/
 
 
 /*
@@ -212,9 +212,11 @@ static void *childcommon (void *tmp) {
 		/*return -1;*/
 		return NULL;
 	}
-	if (rd != &stdinput)
+	/*if (rd != &stdinput)*/
+	if (rd != NULL)
 		threll_close (rd);
-	if (wr != &stdoutput)
+	/*if (wr != &stdoutput)*/
+	if (wr != NULL)
 		threll_close (wr);
 	/*return 0;*/
 	return NULL;
@@ -355,13 +357,15 @@ int thserver (
 		*/
 		void *intmp;
 		void *outtmp;
-		pthread_mutex_lock (&(inq->io->mutex));
-		pthread_mutex_lock (&(outq->io->mutex));
-		intmp  = dequeue (&(inq->io->io));
-		outtmp = enqueue (&(outq->io->io));
+		if (inq != NULL) pthread_mutex_lock (&(inq->io->mutex));
+		if (outq != NULL) pthread_mutex_lock (&(outq->io->mutex));
+		if (inq != NULL) intmp  = dequeue (&(inq->io->io));
+		else intmp = NULL;
+		if (outq != NULL) outtmp = enqueue (&(outq->io->io));
+		else outtmp = NULL;
 		if (cb (intmp, outtmp) != 0) return -1;
-		pthread_mutex_unlock (&(outq->io->mutex));
-		pthread_mutex_unlock (&(inq->io->mutex));
+		if (outq != NULL) pthread_mutex_unlock (&(outq->io->mutex));
+		if (inq != NULL) pthread_mutex_unlock (&(inq->io->mutex));
 	}
 	return 0;
 }
@@ -376,16 +380,16 @@ static int exec_pipelinecb (fd_t *input, fd_t *rd, fd_t *wr,
 	exec_pipelinecb_t *args = (exec_pipelinecb_t *) cbargs;
 	thservercb argv = args->argv;
 
-	fd_t *cmdinput = &stdinput;
-	fd_t *cmdoutput = &stdoutput;
+	fd_t *cmdinput = NULL;
+	fd_t *cmdoutput = NULL;
 
 	/*cb ();*/
 	/*if (first && ! last && input == STDIN_FILENO)*/ /* first command */
-	if (first && ! last && input == &stdinput)
+	if (first && ! last && input == NULL)
 		/*dup2 (wr, STDOUT_FILENO);*/
 		cmdoutput = wr;
 	/*else if (! first && ! last && input != STDIN_FILENO) {*/ /* middle command */
-	else if (! first && ! last && input != &stdinput) {
+	else if (! first && ! last && input != NULL) {
 		/*dup2 (input, STDIN_FILENO);
 		dup2 (wr, STDOUT_FILENO);*/
 		cmdinput = input;
