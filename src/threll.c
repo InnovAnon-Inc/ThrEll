@@ -345,6 +345,7 @@ int ring () {
 int thserver (
 	fd_t *inq, fd_t *outq,
 	thservercb cb) {
+	/* while inq is open */
 	while (true) { /* while ! isempty (inq) ? ... + mutex */
 		/*
 		pthread_mutex_lock (&(inq->io->mutex));
@@ -359,6 +360,7 @@ int thserver (
 		*/
 		void *intmp;
 		void *outtmp;
+		/* if can't dequeue, then block til ready */
 		if (inq != NULL) pthread_mutex_lock (&(inq->io->mutex));
 		if (outq != NULL) pthread_mutex_lock (&(outq->io->mutex));
 		if (inq != NULL) intmp  = dequeue (&(inq->io->io));
@@ -431,3 +433,32 @@ int exec_pipeline (thserver_t *argvs, size_t nargv) {
 	/*puts ("exec_pipeline success");*/
 	return 0;
 }
+
+
+
+
+
+
+
+
+
+
+
+/*
+typedef int (*cmd_t) (void *, void *);
+typedef struct {
+	cmd_t cmd;
+	size_t insz, outsz;
+} cmd_meta_t;
+typedef struct {
+	cmd_t *cmds;
+	size_t ncmd;
+	caq_t *caqs;
+} pipeline_t;
+*/
+
+/*
+?Asz ABsz BCsz CDsz D?sz ?
+? -> A -> B -> C -> D -> ?
+NULL ABq  BCq  CDq  NULL
+ */
