@@ -1,8 +1,12 @@
+#include <string.h>
+#include <sys/types.h>
+
 #include <threll.h>
 
 typedef struct {
-	int x
+	int x;
 } input_t;
+
 typedef struct {
 	double x;
 } output_t;
@@ -10,7 +14,7 @@ typedef struct {
 int cb (void *_input, void *_output) {
 	input_t *input = (input_t *) _input;
 	output_t *output = (output_t *) _output;
-	output.x = (double) input.x
+	output->x = (double) (input->x);
 	return 0;
 }
 
