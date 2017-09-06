@@ -252,11 +252,12 @@ static int command (pipeline_t *cmd, fd_t **input, bool first, bool last) {
 
 	/* TODO a buffer array queue that will allow for
 	 * input_{esz,n} != output_{esz,n} */
-	if (cmd->input_esz != cmd->output_esz)
+	/*if (cmd->input_esz != cmd->output_esz)
 		return -2;
 	if (cmd->input_n != cmd->output_n)
 		return -3;
-	threll_pipe (pipettes + 0, pipettes + 1, cmd->input_esz, cmd->input_n);
+	threll_pipe (pipettes + 0, pipettes + 1, cmd->input_esz, cmd->input_n);*/
+	threll_pipe (pipettes + 0, pipettes + 1, cmd->output_esz, cmd->output_n);
 	/*(void) pipe (pipettes);*/
 
 	cargs.first = first;
