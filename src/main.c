@@ -48,7 +48,7 @@ int main () {
 	argvs[1].output_n   = 3;
 
 	argvs[2].cb = wrcb;
-	argvs[2].input_esz = argvs[1].output_esz
+	argvs[2].input_esz = argvs[1].output_esz;
 	argvs[2].input_n   = argvs[1].input_n;
 	argvs[2].output_esz = 0;
 	argvs[2].output_n   = 0;
