@@ -11,5 +11,4 @@ AC_CONFIG_FILES([
 AC_CONFIG_MACRO_DIR([m4])
 AC_OUTPUT
 
-# TODO
-#AC_CHECK_LIB([ezfork],[ezfork])
+AC_CHECK_LIB([caq],[init_queue,alloc_queue,free_queue,enqueue,dequeue,isempty,isfull,gethead,dumpq])
