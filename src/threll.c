@@ -198,7 +198,7 @@ typedef struct {
 	pipeline_t *cmd;
 } childcommon_t;
 
-static int childcommon (void *tmp) {
+static void *childcommon (void *tmp) {
 	childcommon_t *arg = (childcommon_t *) tmp;
 	bool first = arg->first;
 	bool last = arg->last;
@@ -207,13 +207,15 @@ static int childcommon (void *tmp) {
 	fd_t *wr = arg->wr;
 	pipeline_t *cmd = arg->cmd;
 	if (cmd->cb (input, rd, wr, first, last, cmd->arg) != 0) {
-		return -1;
+		/*return -1;*/
+		return NULL;
 	}
 	if (rd != &stdinput)
 		threll_close (rd);
 	if (wr != &stdoutput)
 		threll_close (wr);
-	return 0;
+	/*return 0;*/
+	return NULL;
 }
 /*
 typedef struct {
@@ -225,7 +227,7 @@ typedef struct {
 } command_t;*/
 
 int ezthork (
-	int (*childcb)  (void *),        void *childcb_args,
+	void *(*childcb)  (void *),        void *childcb_args,
 	int (*parentcb) (pthread_t, void *), void *parentcb_args) {
 	pthread_t pid;
 
