@@ -6,7 +6,7 @@
 
 /*#include <ezfork.h>*/
 
-#include "shell.h"
+#include "threll.h"
 
 
 /*
@@ -24,7 +24,7 @@ int fork_and_wait (int (*cb) (void *), void *cb_args) {
 	return ezfork (cb, cb_args, ezfork_parentcb_wait, NULL);
 }
 */
-typedef closure_t parentcb_t;
+typedef thclosure_t parentcb_t;
 
 /*
 static int ezfork_parentcb_wait2 (pid_t cpid, void *args) {
@@ -82,7 +82,7 @@ static int zombify_wrapper (void *arg) {
 }
 */
 
-typedef closure_t background_t;
+typedef thclosure_t background_t;
 
 /* typedef apply_closure_t; ==> closure with a closure in it */
 
