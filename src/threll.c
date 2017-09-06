@@ -30,7 +30,7 @@ int fork_and_wait (int (*cb) (void *), void *cb_args) {
 	return ezfork (cb, cb_args, ezfork_parentcb_wait, NULL);
 }
 */
-typedef thclosure_t parentcb_t;
+/*typedef thclosure_t parentcb_t;*/
 
 /*
 static int ezfork_parentcb_wait2 (pid_t cpid, void *args) {
@@ -88,7 +88,7 @@ static int zombify_wrapper (void *arg) {
 }
 */
 
-typedef thclosure_t background_t;
+/*typedef thclosure_t background_t;*/
 
 /* typedef apply_closure_t; ==> closure with a closure in it */
 
@@ -357,8 +357,8 @@ int thserver (
 		void *outtmp;
 		pthread_mutex_lock (&(inq->io->mutex));
 		pthread_mutex_lock (&(outq->io->mutex));
-		intmp  = dequeue (inq);
-		outtmp = enqueue (outq);
+		intmp  = dequeue (inq->io->io);
+		outtmp = enqueue (outq->io->io);
 		if (cb (intmp, outtmp) != 0) return -1;
 		pthread_mutex_unlock (&(outq->io->mutex));
 		pthread_mutex_unlock (&(inq->io->mutex));
