@@ -116,13 +116,13 @@ int background (int (*cb) (void *), void *args) {
 
 int threll_close (fd_t *fd) {
 	pipe_t *pipe = fd->io;
-	if (IS_RD_FD (fd) && pipe->nreader == 0)
+	if (IS_FD_RD (fd) && pipe->nreader == 0)
 		return -1;
-	if (IS_WR_FD (fd) && pipe->nwriter == 0)
+	if (IS_RD_WR (fd) && pipe->nwriter == 0)
 		return -2;
-	if (IS_RD_FD (fd))
+	if (IS_FD_RD (fd))
 		pipe->nreader--;
-	if (IS_WR_FD (fd))
+	if (IS_FD_WR (fd))
 		pipe->nwriter--;
 	if (pipe->nreader != 0) {
 		free (fd);
