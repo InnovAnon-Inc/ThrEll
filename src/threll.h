@@ -43,7 +43,13 @@ typedef struct {
 } thclosure_t;
 int exec_pipeline (thclosure_t *argvs, size_t nargv) ;
 */
-int exec_pipeline (thservercb *argvs, size_t nargv) ;
+typedef struct {
+	thservercb cb;
+	size_t input_esz;
+	size_t output_esz;
+} thserver_t;
+
+int exec_pipeline (thserver_t *argvs, size_t nargv) ;
 
 int threll_close (fd_t *fd) ;
 int threll_pipe (fd_t *input, fd_t *output, size_t esz, size_t n) ;

@@ -400,7 +400,9 @@ static int exec_pipelinecb (fd_t *input, fd_t *rd, fd_t *wr,
 	/*return closure->cb (closure->arg);*/
 }
 
-int exec_pipeline (thclosure_t *argvs, size_t nargv) {
+
+
+int exec_pipeline (thserver_t *argvs, size_t nargv) {
 	pipeline_t *cmds = malloc (nargv * sizeof (pipeline_t)
 	+ nargv * sizeof (exec_pipelinecb_t));
 	exec_pipelinecb_t *tmps = (exec_pipelinecb_t *) (cmds + nargv);
@@ -408,7 +410,7 @@ int exec_pipeline (thclosure_t *argvs, size_t nargv) {
 	for (i = 0; i != nargv; i++) {
 		cmds[i].cb = exec_pipelinecb;
 		cmds[i].arg = tmps + i;
-		tmps[i].argv = argvs + i;
+		tmps[i].argv = argvs[i];
 
 		cmds[i].input_esz = argvs[i].input_esz;
 		cmds[i].input_n = argvs[i].input_n;
