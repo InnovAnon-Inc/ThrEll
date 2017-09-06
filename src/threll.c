@@ -355,14 +355,14 @@ static int exec_pipelinecb (fd_t *input, fd_t *rd, fd_t *wr,
 	else if (! first && ! last && input != &stdinput) {
 		/*dup2 (input, STDIN_FILENO);
 		dup2 (wr, STDOUT_FILENO);*/
-		cmdinput = input
+		cmdinput = input;
 		cmdoutput = wr;
 	} else /* last command */
 		/*dup2 (input, STDIN_FILENO);*/
 		cmdinput = input;
 
 	/*execvp (argv[0], argv);*/
-	argv->cb (cmdinput, cmdoutput, argv->args);
+	argv->cb (cmdinput, cmdoutput, argv->arg);
 	return -1;
 	/*return closure->cb (closure->arg);*/
 }
