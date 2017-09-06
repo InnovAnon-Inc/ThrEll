@@ -1,5 +1,7 @@
 #include <string.h>
-#include <sys/types.h>
+#include <stdlib.h>
+
+#include <pthread.h>
 
 #include <threll.h>
 
@@ -20,20 +22,23 @@ int cb (void *_input, void *_output) {
 
 typedef int (*thservercb) (void *, void *) ;
 
+pthread_mutex_t inq_mutex;
+pthread_mutex_t outq_mutex;
+
 int thserver (
 	caq_t *inq, caq_t *outq,
 	void *intmp, void *outtmp,
 	thservercb cb) {
 	while (! isempty (inq)) { /* while true ? */
-		mutex_lock (inq_mutex);
+		pthread_mutex_lock (&inq_mutex);
 		memcpy (intmp, dequeue (inq), inq->esz);
-		mutex_unlock (inq_mutex);
+		pthread_mutex_unlock (&inq_mutex);
 
 		if (cb (intmp, outtmp) != 0) return -1;
 
-		mutex_lock (outq_mutex);
+		pthread_mutex_lock (&outq_mutex);
 		enqueue (outq, outtmp);
-		mutex_unlock (outq_mutex);
+		pthread_mutex_unlock (&outq_mutex);
 	}
 	return 0;
 }
@@ -43,6 +48,9 @@ int main () {
 	output_t outtmp;
 	caq_t inq;
 	caq_t outq;
+
+	pthread_mutex_init(&inq_mutex, NULL);
+	pthread_mutex_init(&outq_mutex, NULL);
 
 	/* TODO inq a few items */
 

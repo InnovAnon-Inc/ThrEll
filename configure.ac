@@ -11,4 +11,5 @@ AC_CONFIG_FILES([
 AC_CONFIG_MACRO_DIR([m4])
 AC_OUTPUT
 
+AC_CHECK_LIB([pthread],[pthread_mutex_init,pthread_mutex_lock,pthread_mutex_unlock])
 AC_CHECK_LIB([caq],[init_queue,alloc_queue,free_queue,enqueue,dequeue,isempty,isfull,gethead,dumpq])
