@@ -410,7 +410,7 @@ int exec_pipeline (thserver_t *argvs, size_t nargv) {
 	for (i = 0; i != nargv; i++) {
 		cmds[i].cb = exec_pipelinecb;
 		cmds[i].arg = tmps + i;
-		tmps[i].argv = argvs[i];
+		tmps[i].argv = argvs[i].cb;
 
 		cmds[i].input_esz = argvs[i].input_esz;
 		cmds[i].input_n = argvs[i].input_n;
