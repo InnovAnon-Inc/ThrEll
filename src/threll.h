@@ -47,6 +47,8 @@ typedef struct {
 	thservercb cb;
 	size_t input_esz;
 	size_t output_esz;
+	size_t input_n;
+	size_t output_n;
 } thserver_t;
 
 int exec_pipeline (thserver_t *argvs, size_t nargv) ;
