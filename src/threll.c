@@ -357,8 +357,8 @@ int thserver (
 		void *outtmp;
 		pthread_mutex_lock (&(inq->io->mutex));
 		pthread_mutex_lock (&(outq->io->mutex));
-		intmp  = dequeue (inq->io->io);
-		outtmp = enqueue (outq->io->io);
+		intmp  = dequeue (&(inq->io->io));
+		outtmp = enqueue (&(outq->io->io));
 		if (cb (intmp, outtmp) != 0) return -1;
 		pthread_mutex_unlock (&(outq->io->mutex));
 		pthread_mutex_unlock (&(inq->io->mutex));
