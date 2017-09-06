@@ -302,7 +302,8 @@ static int command (pipeline_t *cmd, fd_t **input, bool first, bool last) {
 /* nargv is non-zero */
 int pipeline (pipeline_t cmds[], size_t ncmd) {
 	/*caq_t *input = STDIN_FILENO;*/
-	fd_t *input = &stdinput;
+	/*fd_t *input = &stdinput;*/
+	fd_t *input = NULL;
 	bool first = true;
 	size_t i;
 
