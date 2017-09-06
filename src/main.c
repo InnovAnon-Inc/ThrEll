@@ -42,7 +42,7 @@ int main () {
 	argvs[0].output_n   = 2;
 
 	argvs[1].cb = cb;
-	argvs[1].input_esz = argvs[0].ouput_esz;
+	argvs[1].input_esz = argvs[0].output_esz;
 	argvs[1].input_n   = argvs[0].output_n;
 	argvs[1].output_esz = sizeof (double);
 	argvs[1].output_n   = 3;
