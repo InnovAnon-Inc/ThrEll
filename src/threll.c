@@ -335,7 +335,7 @@ int ring () {
 
 
 typedef struct {
-	char *const *argv;
+	thclosure_t *argv;
 } exec_pipelinecb_t;
 
 static int exec_pipelinecb (fd_t *input, fd_t *rd, fd_t *wr,
@@ -348,11 +348,11 @@ static int exec_pipelinecb (fd_t *input, fd_t *rd, fd_t *wr,
 
 	/*cb ();*/
 	/*if (first && ! last && input == STDIN_FILENO)*/ /* first command */
-	if (first && ! last && input == stdinput)
+	if (first && ! last && input == &stdinput)
 		/*dup2 (wr, STDOUT_FILENO);*/
 		cmdoutput = wr;
 	/*else if (! first && ! last && input != STDIN_FILENO) {*/ /* middle command */
-	else if (! first && ! last && input != stdinput) {
+	else if (! first && ! last && input != &stdinput) {
 		/*dup2 (input, STDIN_FILENO);
 		dup2 (wr, STDOUT_FILENO);*/
 		cmdinput = input
@@ -375,7 +375,7 @@ int exec_pipeline (thclosure_t *argvs, size_t nargv) {
 	for (i = 0; i != nargv; i++) {
 		cmds[i].cb = exec_pipelinecb;
 		cmds[i].arg = tmps + i;
-		tmps[i].argv = argvs[i];
+		tmps[i].argv = argvs + i;
 
 		cmds[i].input_esz = argvs[i].input_esz;
 		cmds[i].input_n = argvs[i].input_n;
