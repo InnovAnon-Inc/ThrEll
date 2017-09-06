@@ -9,6 +9,11 @@
 #include "threll.h"
 
 
+fd_t stdinput;
+fd_t stdoutput;
+
+
+
 /*
 static int ezfork_parentcb_wait (pid_t cpid, void *unused) {
 	pid_t wpid;
@@ -116,7 +121,7 @@ int threll_close (fd_t *fd) {
 		return -2;
 	if (IS_RD_FD (fd))
 		pipe->nreader--;
-	if (IS_WR_FD (wr))
+	if (IS_WR_FD (fd))
 		pipe->nwriter--;
 	if (pipe->nreader != 0) {
 		free (fd);
@@ -204,9 +209,9 @@ static int childcommon (void *tmp) {
 	if (cmd->cb (input, rd, wr, first, last, cmd->arg) != 0) {
 		return -1;
 	}
-	if (rd != stdinput)
+	if (rd != &stdinput)
 		threll_close (rd);
-	if (wr != stdoutput)
+	if (wr != &stdoutput)
 		threll_close (wr);
 	return 0;
 }
@@ -279,9 +284,6 @@ static int command (pipeline_t *cmd, fd_t **input, bool first, bool last) {
 
 	return 0;
 }
-
-fd_t stdinput;
-fd_t stdoutput;
 
 /* TODO add void * param to cmds' siggy, and void * arg... closure-style */
 

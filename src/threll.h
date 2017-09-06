@@ -46,7 +46,7 @@ int threll_pipe (fd_t *input, fd_t *output, size_t esz, size_t n) ;
 typedef struct {
 	int (*cb) (fd_t *, fd_t *, fd_t *, bool, bool, void *);
 	void *arg;
-	thread_t cpid;
+	pthread_t cpid;
 	size_t input_esz;
 	size_t input_n;
 	size_t output_esz;
