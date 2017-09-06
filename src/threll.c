@@ -9,6 +9,7 @@
 #include "threll.h"
 
 
+pipe_t stdpipe;
 fd_t stdinput;
 fd_t stdoutput;
 
@@ -146,6 +147,7 @@ int threll_pipe (fd_t *input, fd_t *output, size_t esz, size_t n) {
 	input->type = FD_RD;
 	output->io = pipe;
 	output->type = FD_WR;
+	pthread_mutex_init(&(pipe->mutex), NULL);
 	return 0;
 }
 /*
@@ -334,8 +336,39 @@ int ring () {
 
 
 
+
+
+int thserver (
+	fd_t *inq, fd_t *outq,
+	thservercb cb) {
+	while (true) { /* while ! isempty (inq) ? ... + mutex */
+		/*
+		pthread_mutex_lock (&(inq->io->mutex));
+		memcpy (intmp, dequeue (inq), inq->esz);
+		pthread_mutex_unlock (&(inq->io->mutex));
+
+		if (cb (intmp, outtmp) != 0) return -1;
+
+		pthread_mutex_lock (&(outq->io->mutex));
+		enqueue (outq, outtmp);
+		pthread_mutex_unlock (&(outq->io->mutex));
+		*/
+		void *intmp;
+		void *outtmp;
+		pthread_mutex_lock (&(inq->io->mutex));
+		pthread_mutex_lock (&(outq->io->mutex));
+		intmp  = dequeue (inq);
+		outtmp = enqueue (outq);
+		if (cb (intmp, outtmp) != 0) return -1;
+		pthread_mutex_unlock (&(outq->io->mutex));
+		pthread_mutex_unlock (&(inq->io->mutex));
+	}
+	return 0;
+}
+
 typedef struct {
-	thclosure_t *argv;
+	/*thclosure_t *argv;*/
+	thservercb argv;
 } exec_pipelinecb_t;
 
 static int exec_pipelinecb (fd_t *input, fd_t *rd, fd_t *wr,
@@ -362,7 +395,7 @@ static int exec_pipelinecb (fd_t *input, fd_t *rd, fd_t *wr,
 		cmdinput = input;
 
 	/*execvp (argv[0], argv);*/
-	argv->cb (cmdinput, cmdoutput, argv->arg);
+	thserver (cmdinput, cmdoutput, argv);
 	return -1;
 	/*return closure->cb (closure->arg);*/
 }

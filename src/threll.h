@@ -14,6 +14,8 @@
 
 /* ring, command, pipeline */
 
+typedef int (*thservercb) (void *, void *) ;
+
 #define FD_RD (1)
 #define FD_WR (2)
 #define IS_FD_RD(F) ((F)->type & FD_RD)
@@ -23,13 +25,14 @@ typedef struct {
 	caq_t io;
 	size_t nreader;
 	size_t nwriter;
+	pthread_mutex_t mutex;
 } pipe_t;
 
 typedef struct {
 	pipe_t *io;
 	int type;
 } fd_t;
-
+/*
 typedef struct {
 	int (*cb) (fd_t *input, fd_t *output, void *);
 	void *arg;
@@ -39,6 +42,8 @@ typedef struct {
 	size_t output_n;
 } thclosure_t;
 int exec_pipeline (thclosure_t *argvs, size_t nargv) ;
+*/
+int exec_pipeline (thservercb *argvs, size_t nargv) ;
 
 int threll_close (fd_t *fd) ;
 int threll_pipe (fd_t *input, fd_t *output, size_t esz, size_t n) ;
