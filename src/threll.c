@@ -127,7 +127,8 @@ int threll_close (fd_t *fd) {
 	if (IS_FD_WR (fd))
 		pipe->nwriter--;
 	if (pipe->nreader != 0) {
-		free (fd);
+		/* TODO see below */
+		/*free (fd);*/
 		return 0;
 	}
 	if (pipe->nwriter != 0)
