@@ -133,10 +133,13 @@ int threll_close (fd_t *fd) {
 	if (pipe->nwriter != 0)
 		return -3;
 
-	free_queue (&(pipe->io));
+	/* TODO I think we're re-freeing here,
+	 * because parent & child both free "file descriptors"
+	 * multiprocessing vs multithreading */
+	/*free_queue (&(pipe->io));
 	free (pipe);
 	if (IS_FD_RD (fd))
-		free (fd);
+		free (fd);*/
 	return 0;
 }
 int threll_pipe (fd_t *input, fd_t *output, size_t esz, size_t n) {
@@ -153,7 +156,7 @@ int threll_pipe (fd_t *input, fd_t *output, size_t esz, size_t n) {
 	pthread_mutex_init(&(pipe->mutex), NULL);
 	return 0;
 }
-/*
+
 void threll_cp (fd_t *dest, fd_t *src) {
 	dest->io = src->io;
 	dest->type = src->type;
@@ -162,7 +165,7 @@ void threll_cp (fd_t *dest, fd_t *src) {
 	if (IS_FD_WR (dest->type))
 		dest->io->nwriter++;
 }
-*/
+
 typedef struct {
 	fd_t *input;
 	fd_t *wr;
@@ -275,16 +278,16 @@ static int command (pipeline_t *cmd, fd_t **input, bool first, bool last) {
 	pargs.input = *input;
 	/*pargs.wr = pipettes[1];
 	pargs.rd = pipettes[0];*/
-	/*pargs.wr = pipettes + 1;
-	pargs.rd = pipettes + 0;*/
-	threll_cp (pargs.wr, pipettes + 1);
-	threll_cp (pargs.rd, pipettes + 0);
+	pargs.wr = pipettes + 1;
+	pargs.rd = pipettes + 0;
+	/*threll_cp (pargs.wr, pipettes + 1);
+	threll_cp (pargs.rd, pipettes + 0);*/
 	pargs.last = last;
 
 	/* *input = pipettes[0];*/
-	/* *input = pipettes + 0;*/
+	*input = pipettes + 0;
 	/*threll_cp (*input, pipetts + 0);*/
-	*input = pargs.rd;
+	/* *input = pargs.rd;*/
 
 	if (ezthork (childcommon, &cargs, parentcb, &pargs) != 0) {
 		return -1;
