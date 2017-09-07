@@ -115,7 +115,9 @@ int background (int (*cb) (void *), void *args) {
 /* ------------------------------------------ */
 
 int threll_close (fd_t *fd) {
-	pipe_t *pipe = fd->io;
+	pipe_t *pipe;
+	if (fd == NULL) return 0;
+	pipe = fd->io;
 	if (IS_FD_RD (fd) && pipe->nreader == 0)
 		return -1;
 	if (IS_FD_WR (fd) && pipe->nwriter == 0)
@@ -176,7 +178,7 @@ static int parentcb (pthread_t cpid, void *cbargs) {
 	fd_t *rd = args->rd;
 	args->cpid = cpid;
 
-	if (input != NULL) threll_close (input);
+	threll_close (input);
 	threll_close (wr);
 	if (last) threll_close (rd);
 	return 0;
