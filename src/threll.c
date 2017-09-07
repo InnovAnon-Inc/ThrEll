@@ -141,6 +141,8 @@ int threll_close (fd_t *fd) {
 	free (pipe);
 	if (IS_FD_RD (fd))
 		free (fd);*/
+	/* pthread_mutex_destroy */
+	/* pthread_cond_destroy */
 	return 0;
 }
 int threll_pipe (fd_t *input, fd_t *output, size_t esz, size_t n) {
@@ -155,6 +157,7 @@ int threll_pipe (fd_t *input, fd_t *output, size_t esz, size_t n) {
 	output->io = pipe;
 	output->type = FD_WR;
 	pthread_mutex_init(&(pipe->mutex), NULL);
+	pthread_cond_init (&(pipe->cond), NULL);
 	return 0;
 }
 
@@ -389,11 +392,27 @@ int thserver (
 		void *outtmp;
 		/* if can't dequeue, then block til ready */
 		if (inq != NULL) pthread_mutex_lock (&(inq->io->mutex));
+		if (inq != NULL && isempty (inq))
+			pthread_cond_wait(&(inq->io->cond), &(inq->io->mutex));
+		if (inq != NULL && isempty (inq)) {
+			pthread_mutex_unlock (&(inq->io->mutex));
+			pthread_mutex_unlock (&(outq->io->mutex));
+			break;
+		}
+		if (inq != NULL) {
+			intmp  = dequeue (&(inq->io->io));
+			pthread_cond_signal (&(inq->io->cond));
+		} else intmp = NULL;
+
 		if (outq != NULL) pthread_mutex_lock (&(outq->io->mutex));
-		if (inq != NULL) intmp  = dequeue (&(inq->io->io));
-		else intmp = NULL;
-		if (outq != NULL) outtmp = enqueue (&(outq->io->io));
-		else outtmp = NULL;
+		while (outq != NULL && isfull (outq))
+			pthread_cond_wait (&(outq->io->cond));
+		if (outq != NULL) {
+			outtmp = enqueue (&(outq->io->io));
+			pthread_cond_signal (&(outq->io->cond));
+		} else outtmp = NULL;
+
+
 		if (cb (intmp, outtmp) != 0) return -1;
 		if (outq != NULL) pthread_mutex_unlock (&(outq->io->mutex));
 		if (inq != NULL) pthread_mutex_unlock (&(inq->io->mutex));
