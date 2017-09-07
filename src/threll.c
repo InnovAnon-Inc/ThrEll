@@ -275,15 +275,16 @@ static int command (pipeline_t *cmd, fd_t **input, bool first, bool last) {
 	pargs.input = *input;
 	/*pargs.wr = pipettes[1];
 	pargs.rd = pipettes[0];*/
-	pargs.wr = pipettes + 1;
-	pargs.rd = pipettes + 0;
-	/*threll_cp (pargs.wr, pipettes + 1);
-	threll_cp (pargs.rd, pipettes + 0);*/
+	/*pargs.wr = pipettes + 1;
+	pargs.rd = pipettes + 0;*/
+	threll_cp (pargs.wr, pipettes + 1);
+	threll_cp (pargs.rd, pipettes + 0);
 	pargs.last = last;
 
 	/* *input = pipettes[0];*/
-	*input = pipettes + 0;
+	/* *input = pipettes + 0;*/
 	/*threll_cp (*input, pipetts + 0);*/
+	*input = pargs.rd;
 
 	if (ezthork (childcommon, &cargs, parentcb, &pargs) != 0) {
 		return -1;
