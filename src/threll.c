@@ -176,7 +176,7 @@ static int parentcb (pthread_t cpid, void *cbargs) {
 	fd_t *rd = args->rd;
 	args->cpid = cpid;
 
-	threll_close (input);
+	if (input != NULL) threll_close (input);
 	threll_close (wr);
 	if (last) threll_close (rd);
 	return 0;
