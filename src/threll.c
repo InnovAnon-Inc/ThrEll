@@ -216,7 +216,7 @@ static void *childcommon (void *tmp) {
 	fd_t *wr = arg->wr;
 	pipeline_t *cmd = arg->cmd;
 	int (*cb) (fd_t *, fd_t *, fd_t *, bool, bool, void *);
-	void *cbarg = cmd->arg;
+	void *cbarg;
 	int err;
 	if (input == NULL) puts ("input is NULL");
 	if (rd == NULL) puts ("rd is NULL");
@@ -224,6 +224,7 @@ static void *childcommon (void *tmp) {
 	if (cmd == NULL) puts ("cmd is NULL");
 	cb = cmd->cb;
 	if (cb == NULL) puts ("cb is NULL");
+	cbarg = cmd->arg;
 	if (cbarg == NULL) puts ("cbarg is NULL");
 	if (first) puts ("first is true");
 	if (last) puts ("last is true");
