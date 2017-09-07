@@ -218,16 +218,14 @@ static void *childcommon (void *tmp) {
 	int (*cb) (fd_t *, fd_t *, fd_t *, bool, bool, void *) = cmd->cb;
 	void *cbarg = cmd->arg;
 	int err;
-	int k = 0;
-	if (input == NULL) k++;
-	if (rd == NULL) k++;
-	if (wr == NULL) k++;
-	if (cmd == NULL) k++;
-	if (cb == NULL) k++;
-	if (cbarg == NULL) k++;
-	if (input == NULL) k++;
-	if (first) k++;
-	if (last) k++;
+	if (input == NULL) puts ("input is NULL");
+	if (rd == NULL) puts ("rd is NULL");
+	if (wr == NULL) puts ("wr is NULL");
+	if (cmd == NULL) puts ("cmd is NULL");
+	if (cb == NULL) puts ("cb is NULL");
+	if (cbarg == NULL) puts ("cbarg is NULL");
+	if (first) puts ("first is true");
+	if (last) puts ("last is true");
 	err = cb (input, rd, wr, first, last, cbarg);
 	if (err != 0) {
 		/*return -1;*/
