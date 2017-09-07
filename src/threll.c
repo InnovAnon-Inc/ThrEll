@@ -392,9 +392,9 @@ int thserver (
 		void *outtmp;
 		/* if can't dequeue, then block til ready */
 		if (inq != NULL) pthread_mutex_lock (&(inq->io->mutex));
-		if (inq != NULL && isempty (inq))
+		if (inq != NULL && isempty (inq->io))
 			pthread_cond_wait(&(inq->io->cond), &(inq->io->mutex));
-		if (inq != NULL && isempty (inq)) {
+		if (inq != NULL && isempty (inq->io)) {
 			pthread_mutex_unlock (&(inq->io->mutex));
 			pthread_mutex_unlock (&(outq->io->mutex));
 			break;
@@ -405,8 +405,8 @@ int thserver (
 		} else intmp = NULL;
 
 		if (outq != NULL) pthread_mutex_lock (&(outq->io->mutex));
-		while (outq != NULL && isfull (outq))
-			pthread_cond_wait (&(outq->io->cond));
+		while (outq != NULL && isfull (outq->io))
+			pthread_cond_wait (&(outq->io->cond), &(outq->io->mutex));
 		if (outq != NULL) {
 			outtmp = enqueue (&(outq->io->io));
 			pthread_cond_signal (&(outq->io->cond));
