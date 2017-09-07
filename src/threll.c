@@ -135,7 +135,8 @@ int threll_close (fd_t *fd) {
 
 	free_queue (&(pipe->io));
 	free (pipe);
-	free (fd);
+	if (IS_FD_RD (fd))
+		free (fd);
 	return 0;
 }
 int threll_pipe (fd_t *input, fd_t *output, size_t esz, size_t n) {
