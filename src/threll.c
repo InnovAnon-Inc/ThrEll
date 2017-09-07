@@ -160,9 +160,9 @@ int threll_pipe (fd_t *input, fd_t *output, size_t esz, size_t n) {
 void threll_cp (fd_t *dest, fd_t *src) {
 	dest->io = src->io;
 	dest->type = src->type;
-	if (IS_FD_RD (dest->type))
+	if (IS_FD_RD (dest))
 		dest->io->nreader++;
-	if (IS_FD_WR (dest->type))
+	if (IS_FD_WR (dest))
 		dest->io->nwriter++;
 }
 
