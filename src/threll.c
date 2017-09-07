@@ -263,12 +263,17 @@ int ezthork (
 }
 
 static int command (pipeline_t *cmd, fd_t **input, bool first, bool last) {
-	childcommon_t cargs;
+	childcommon_t *cargs;
 	parentcb2_t pargs;
 
 	fd_t *pipettes = malloc (2 * sizeof (fd_t));
 	if (pipettes == NULL) {
 		return -1;
+	}
+	cargs = malloc (sizeof (childcommon_t));
+	if (cargs == NULL) {
+		free (pipettes);
+		return -2;
 	}
 
 	/* TODO a buffer array queue that will allow for
@@ -281,14 +286,14 @@ static int command (pipeline_t *cmd, fd_t **input, bool first, bool last) {
 	threll_pipe (pipettes + 0, pipettes + 1, cmd->output_esz, cmd->output_n);
 	/*(void) pipe (pipettes);*/
 
-	cargs.first = first;
-	cargs.last = last;
-	cargs.input = *input;
+	cargs->first = first;
+	cargs->last = last;
+	cargs->input = *input;
 	/*cargs.rd = pipettes[0];
 	cargs.wr = pipettes[1];*/
-	cargs.rd = pipettes + 0;
-	cargs.wr = pipettes + 1;
-	cargs.cmd = cmd;
+	cargs->rd = pipettes + 0;
+	cargs->wr = pipettes + 1;
+	cargs->cmd = cmd;
 
 	pargs.input = *input;
 	/*pargs.wr = pipettes[1];
@@ -304,7 +309,7 @@ static int command (pipeline_t *cmd, fd_t **input, bool first, bool last) {
 	/*threll_cp (*input, pipetts + 0);*/
 	/* *input = pargs.rd;*/
 
-	if (ezthork (childcommon, &cargs, parentcb, &pargs) != 0) {
+	if (ezthork (childcommon, cargs, parentcb, &pargs) != 0) {
 		return -1;
 	}
 	cmd->cpid = pargs.cpid;
