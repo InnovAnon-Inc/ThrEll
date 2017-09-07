@@ -26,7 +26,7 @@ typedef struct {
 	size_t nreader;
 	size_t nwriter;
 	pthread_mutex_t mutex;
-	pthread_cond_t cond;
+	pthread_cond_t empty, full;
 } pipe_t;
 
 typedef struct {

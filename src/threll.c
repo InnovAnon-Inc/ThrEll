@@ -393,7 +393,7 @@ int thserver (
 		/* if can't dequeue, then block til ready */
 		if (inq != NULL) pthread_mutex_lock (&(inq->io->mutex));
 		if (inq != NULL && isempty (inq->io))
-			pthread_cond_wait(&(inq->io->cond), &(inq->io->mutex));
+			pthread_cond_wait(&(inq->io->empty), &(inq->io->mutex));
 		if (inq != NULL && isempty (inq->io)) {
 			pthread_mutex_unlock (&(inq->io->mutex));
 			pthread_mutex_unlock (&(outq->io->mutex));
@@ -401,15 +401,15 @@ int thserver (
 		}
 		if (inq != NULL) {
 			intmp  = dequeue (&(inq->io->io));
-			pthread_cond_signal (&(inq->io->cond));
+			pthread_cond_signal (&(inq->io->full));
 		} else intmp = NULL;
 
 		if (outq != NULL) pthread_mutex_lock (&(outq->io->mutex));
 		while (outq != NULL && isfull (outq->io))
-			pthread_cond_wait (&(outq->io->cond), &(outq->io->mutex));
+			pthread_cond_wait (&(outq->io->full), &(outq->io->mutex));
 		if (outq != NULL) {
 			outtmp = enqueue (&(outq->io->io));
-			pthread_cond_signal (&(outq->io->cond));
+			pthread_cond_signal (&(outq->io->empty));
 		} else outtmp = NULL;
 
 		if (cb (intmp, outtmp) != 0) return -1;
