@@ -215,7 +215,9 @@ static void *childcommon (void *tmp) {
 	fd_t *rd = arg->rd;
 	fd_t *wr = arg->wr;
 	pipeline_t *cmd = arg->cmd;
-	if (cmd->cb (input, rd, wr, first, last, cmd->arg) != 0) {
+	int (*cb) (fd_t *, fd_t *, fd_t *, bool, bool, void *) = cmd->cb;
+	void *cbarg = cmd->arg;
+	if (cb (input, rd, wr, first, last, cbarg) != 0) {
 		/*return -1;*/
 		return NULL;
 	}
