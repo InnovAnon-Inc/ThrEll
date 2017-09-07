@@ -223,6 +223,9 @@ static void *childcommon (void *tmp) {
 	if (cmd == NULL);
 	if (cb == NULL);
 	if (cbarg == NULL);
+	if (input == NULL);
+	if (first);
+	if (last);
 	if (cb (input, rd, wr, first, last, cbarg) != 0) {
 		/*return -1;*/
 		return NULL;
