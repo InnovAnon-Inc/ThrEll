@@ -215,13 +215,14 @@ static void *childcommon (void *tmp) {
 	fd_t *rd = arg->rd;
 	fd_t *wr = arg->wr;
 	pipeline_t *cmd = arg->cmd;
-	int (*cb) (fd_t *, fd_t *, fd_t *, bool, bool, void *) = cmd->cb;
+	int (*cb) (fd_t *, fd_t *, fd_t *, bool, bool, void *);
 	void *cbarg = cmd->arg;
 	int err;
 	if (input == NULL) puts ("input is NULL");
 	if (rd == NULL) puts ("rd is NULL");
 	if (wr == NULL) puts ("wr is NULL");
 	if (cmd == NULL) puts ("cmd is NULL");
+	cb = cmd->cb;
 	if (cb == NULL) puts ("cb is NULL");
 	if (cbarg == NULL) puts ("cbarg is NULL");
 	if (first) puts ("first is true");
