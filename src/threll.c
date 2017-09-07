@@ -455,6 +455,10 @@ typedef struct {
 	size_t ncmd;
 	caq_t *caqs;
 } pipeline_t;
+
+void setup_two_threads () {
+
+}
 */
 
 /*
