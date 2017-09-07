@@ -157,7 +157,8 @@ int threll_pipe (fd_t *input, fd_t *output, size_t esz, size_t n) {
 	output->io = pipe;
 	output->type = FD_WR;
 	pthread_mutex_init(&(pipe->mutex), NULL);
-	pthread_cond_init (&(pipe->cond), NULL);
+	pthread_cond_init (&(pipe->empty), NULL);
+	pthread_cond_init (&(pipe->full), NULL);
 	return 0;
 }
 
