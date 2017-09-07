@@ -217,6 +217,12 @@ static void *childcommon (void *tmp) {
 	pipeline_t *cmd = arg->cmd;
 	int (*cb) (fd_t *, fd_t *, fd_t *, bool, bool, void *) = cmd->cb;
 	void *cbarg = cmd->arg;
+	if (input == NULL);
+	if (rd == NULL);
+	if (wr == NULL);
+	if (cmd == NULL);
+	if (cb == NULL);
+	if (cbarg == NULL);
 	if (cb (input, rd, wr, first, last, cbarg) != 0) {
 		/*return -1;*/
 		return NULL;
@@ -441,6 +447,7 @@ int exec_pipeline (thserver_t *argvs, size_t nargv) {
 		return -1;
 	}
 	/*puts ("exec_pipeline success");*/
+	free (cmds);
 	return 0;
 }
 
