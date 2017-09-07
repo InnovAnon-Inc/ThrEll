@@ -412,7 +412,6 @@ int thserver (
 			pthread_cond_signal (&(outq->io->cond));
 		} else outtmp = NULL;
 
-
 		if (cb (intmp, outtmp) != 0) return -1;
 		if (outq != NULL) pthread_mutex_unlock (&(outq->io->mutex));
 		if (inq != NULL) pthread_mutex_unlock (&(inq->io->mutex));
