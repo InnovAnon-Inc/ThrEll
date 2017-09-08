@@ -417,7 +417,7 @@ int thserver (
 				if (pthread_mutex_unlock (&(inq->io->mutex)) != 0) return -2;
 				if (sem_wait (&(inq->io->empty)) != 0) return -3;
 				if (pthread_mutex_lock (&(inq->io->mutex)) != 0) return -4;
-			} while (isempty (inq->io->io)) ;
+			} while (isempty (&(inq->io->io))) ;
 		if (inq != NULL) {
 			intmp  = dequeue (&(inq->io->io));
 			/*pthread_cond_signal (&(inq->io->full));*/
@@ -432,7 +432,7 @@ int thserver (
 				if (pthread_mutex_unlock (&(outq->io->mutex)) != 0) return -6;
 				if (sem_wait (&(outq->io->full)) != 0) return -7;
 				if (pthread_mutex_lock (&(outq->io->mutex)) != 0) return -8;
-			} while (isfull (outq->io->io)) ;
+			} while (isfull (&(outq->io->io))) ;
 		/*
 		while (outq != NULL && isfull (outq->io))
 			pthread_cond_wait (&(outq->io->full), &(outq->io->mutex));
@@ -499,8 +499,9 @@ static int exec_pipelinecb (fd_t *input, fd_t *rd, fd_t *wr,
 int exec_pipeline (thserver_t *argvs, size_t nargv) {
 	pipeline_t *cmds = malloc (nargv * sizeof (pipeline_t)
 	+ nargv * sizeof (exec_pipelinecb_t));
+	exec_pipelinecb_t *tmps;
 	if (cmds == NULL) return -1;
-	exec_pipelinecb_t *tmps = (exec_pipelinecb_t *) (cmds + nargv);
+	tmps = (exec_pipelinecb_t *) (cmds + nargv);
 	size_t i;
 	for (i = 0; i != nargv; i++) {
 		cmds[i].cb = exec_pipelinecb;

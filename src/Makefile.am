@@ -4,7 +4,7 @@ include_HEADERS	= threll.h
 
 libthrell_la_CFLAGS = -Wextra -pedantic -ansi -Werror -Wdouble-promotion \
                    -Wformat=2 -Wswitch-default -Wswitch-enum -Wuninitialized \
-                   -Wstrict-aliasing=1 -Wstrict-overflow=5 \
+                   -Wstrict-aliasing=3 -Wstrict-overflow=5 \
                    -Wsuggest-attribute=pure -Wsuggest-attribute=const \
                    -Wsuggest-attribute=noreturn -Wsuggest-attribute=format \
                    -Warray-bounds=2 -Wtrampolines -Wfloat-equal \
