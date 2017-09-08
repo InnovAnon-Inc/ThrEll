@@ -49,7 +49,7 @@ static int wrcb (void *_input, void *unused) {
 	return 0;
 }
 
-int main () {
+int main (void) {
 	size_t nargv = 3;
 	thserver_t argvs[3];
 	argvs[0].cb = rdcb;
