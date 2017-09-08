@@ -41,8 +41,11 @@ static int rdcb (void *unused, void *_output) {
 
 static int wrcb (void *_input, void *unused) {
 	/*double *input = (double *) _input;*/
-	double *input = &(((output_t *) _input)->x);
-	ssize_t wr = write (STDOUT_FILENO, input, sizeof (double));
+	double *input;
+	ssize_t wr;
+	if (_input == NULL) return -1;
+	input = &(((output_t *) _input)->x);
+	wr = write (STDOUT_FILENO, input, sizeof (double));
 	if (wr != sizeof (double)) return -2;
 	/*fflush (stdout);
 	printf ("write:%g\n", *input);*/
