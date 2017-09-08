@@ -157,8 +157,10 @@ int threll_pipe (fd_t *input, fd_t *output, size_t esz, size_t n) {
 	output->io = pipe;
 	output->type = FD_WR;
 	pthread_mutex_init(&(pipe->mutex), NULL);
-	pthread_cond_init (&(pipe->empty), NULL);
-	pthread_cond_init (&(pipe->full), NULL);
+	/*pthread_cond_init (&(pipe->empty), NULL);
+	pthread_cond_init (&(pipe->full), NULL);*/
+	sem_init (&(pipe->full), 0, n);
+	sem_init (&(pipe->empty), 0, 0);
 	return 0;
 }
 
@@ -393,29 +395,47 @@ int thserver (
 		void *outtmp;
 		/* if can't dequeue, then block til ready */
 		if (inq != NULL) pthread_mutex_lock (&(inq->io->mutex));
-		if (inq != NULL && isempty (inq->io))
+		/*if (inq != NULL && isempty (inq->io))
 			pthread_cond_wait(&(inq->io->empty), &(inq->io->mutex));
 		if (inq != NULL && isempty (inq->io)) {
 			pthread_mutex_unlock (&(inq->io->mutex));
 			pthread_mutex_unlock (&(outq->io->mutex));
 			break;
-		}
+		}*/
+		if (inq != NULL)
+			do {
+				pthread_mutex_unlock (&(inq->io->mutex));
+				sem_wait (&(inq->io->empty));
+				pthread_mutex_lock (&(inq->io->mutex));
+			} while (isempty (inq->io)) ;
 		if (inq != NULL) {
 			intmp  = dequeue (&(inq->io->io));
-			pthread_cond_signal (&(inq->io->full));
+			/*pthread_cond_signal (&(inq->io->full));*/
+			sem_post (&(inq->io->full));
 		} else intmp = NULL;
 
 		if (outq != NULL) pthread_mutex_lock (&(outq->io->mutex));
+		if (outq != NULL)
+			do {
+				pthread_mutex_unlock (&(outq->io->mutex));
+				sem_wait (&(outq->io->full));
+				pthread_mutex_lock (&(outq->io->mutex));
+			} while (isfull (outq->io)) ;
+		/*
 		while (outq != NULL && isfull (outq->io))
 			pthread_cond_wait (&(outq->io->full), &(outq->io->mutex));
+		*/
 		if (outq != NULL) {
 			outtmp = enqueue (&(outq->io->io));
-			pthread_cond_signal (&(outq->io->empty));
+			/*pthread_cond_signal (&(outq->io->empty));*/
+			sem_post (&(outq->io->empty));
 		} else outtmp = NULL;
 
 		if (cb (intmp, outtmp) != 0) return -1;
 		if (outq != NULL) pthread_mutex_unlock (&(outq->io->mutex));
 		if (inq != NULL) pthread_mutex_unlock (&(inq->io->mutex));
+
+		/* TODO the example moves the sem_post() to after the mutex_unlock() */
 	}
 	return 0;
 }

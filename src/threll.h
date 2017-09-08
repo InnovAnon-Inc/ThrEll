@@ -5,6 +5,7 @@
 #include <sys/types.h>
 
 #include <pthread.h>
+#include <semaphore.h>
 
 #include <caq.h>
 
@@ -26,7 +27,7 @@ typedef struct {
 	size_t nreader;
 	size_t nwriter;
 	pthread_mutex_t mutex;
-	pthread_cond_t empty, full;
+	sem_t empty, full;
 } pipe_t;
 
 typedef struct {
