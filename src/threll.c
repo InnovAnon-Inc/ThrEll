@@ -380,7 +380,7 @@ int ring (void) {
 
 
 
-int th_read (fd_t *inq, int (*cb) (void *, void *), void *arg) {
+static int th_read (fd_t *inq, int (*cb) (void *, void *), void *arg) {
 	if (pthread_mutex_lock (&(inq->io->mutex)) != 0) return -1;
 	do {
 		if (pthread_mutex_unlock (&(inq->io->mutex)) != 0) return -2;
@@ -398,7 +398,7 @@ int th_read (fd_t *inq, int (*cb) (void *, void *), void *arg) {
 	if (pthread_mutex_unlock (&(inq->io->mutex)) != 0) return -7;
 	return 0;
 }
-int th_write (fd_t *outq, int (*cb) (void *, void *), void *arg) {
+static int th_write (fd_t *outq, int (*cb) (void *, void *), void *arg) {
 	if (pthread_mutex_lock (&(outq->io->mutex)) != 0) return -1;
 	do {
 		if (pthread_mutex_unlock (&(outq->io->mutex)) != 0) return -2;
@@ -416,8 +416,6 @@ int th_write (fd_t *outq, int (*cb) (void *, void *), void *arg) {
 	if (pthread_mutex_unlock (&(outq->io->mutex)) != 0) return -7;
 	return 0;
 }
-
-
 
 typedef struct {
 	void *rd;
