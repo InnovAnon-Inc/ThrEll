@@ -381,6 +381,7 @@ int ring (void) {
 
 
 static int th_read (fd_t *inq, int (*cb) (void *, void *), void *arg) {
+	if (inq == NULL) return -8;
 	if (pthread_mutex_lock (&(inq->io->mutex)) != 0) return -1;
 	do {
 		if (pthread_mutex_unlock (&(inq->io->mutex)) != 0) return -2;
@@ -399,6 +400,7 @@ static int th_read (fd_t *inq, int (*cb) (void *, void *), void *arg) {
 	return 0;
 }
 static int th_write (fd_t *outq, int (*cb) (void *, void *), void *arg) {
+	if (outq == NULL) return -8;
 	if (pthread_mutex_lock (&(outq->io->mutex)) != 0) return -1;
 	do {
 		if (pthread_mutex_unlock (&(outq->io->mutex)) != 0) return -2;
