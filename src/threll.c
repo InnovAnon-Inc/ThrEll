@@ -392,6 +392,7 @@ static int th_read (fd_t *inq, int (*cb) (void *, void *), void *arg) {
 		if (pthread_mutex_lock (&(inq->io->mutex)) != 0) return -4;
 	} while (isempty (&(inq->io->io))) ;
 	if (cb (dequeue (&(inq->io->io)), arg) != 0) {
+		sem_post (&(inq->io->full));
 		pthread_mutex_unlock (&(inq->io->mutex));
 		return -5;
 	}
@@ -414,6 +415,7 @@ static int th_write (fd_t *outq, int (*cb) (void *, void *), void *arg) {
 		if (pthread_mutex_lock (&(outq->io->mutex)) != 0) return -4;
 	} while (isfull (&(outq->io->io))) ;
 	if (cb (enqueue (&(outq->io->io)), arg) != 0) {
+		sem_post (&(outq->io->empty));
 		pthread_mutex_unlock (&(outq->io->mutex));
 		return -5;
 	}
