@@ -138,9 +138,9 @@ int threll_close (fd_t *fd) {
 	 * because parent & child both free "file descriptors"
 	 * multiprocessing vs multithreading */
 	free_queue (&(pipe->io));
-	pthread_mutex_destroy (&(pipe->mutex));
-	sem_destroy (&(pipe->full));
-	sem_destroy (&(pipe->empty));
+	if (pthread_mutex_destroy (&(pipe->mutex)) != 0) return -4;
+	if (sem_destroy (&(pipe->full)) != 0) return -5;
+	if (sem_destroy (&(pipe->empty)) != 0) return -6;
 	free (pipe);
 	if (IS_FD_RD (fd))
 		free (fd);
@@ -154,16 +154,17 @@ int threll_pipe (fd_t *input, fd_t *output, size_t esz, size_t n) {
 	pipe->nreader = 1;
 	pipe->nwriter = 1;
 	/* TODO init pipe->io */
-	alloc_queue (&(pipe->io), esz, n);
+	if (alloc_queue (&(pipe->io), esz, n) != 0) return -2;
 	input->io = pipe;
 	input->type = FD_RD;
 	output->io = pipe;
 	output->type = FD_WR;
-	pthread_mutex_init(&(pipe->mutex), NULL);
+	/*pthread_mutex_init(&(pipe->mutex), NULL);*/
+	pipe->mutex = (pthread_mutex_t) PTHREAD_MUTEX_INITIALIZER;
 	/*pthread_cond_init (&(pipe->empty), NULL);
 	pthread_cond_init (&(pipe->full), NULL);*/
-	sem_init (&(pipe->full), 0, n);
-	sem_init (&(pipe->empty), 0, 0);
+	if (sem_init (&(pipe->full), 0, n) != 0) return -3;
+	if (sem_init (&(pipe->empty), 0, 0) != 0) return -4;
 	return 0;
 }
 
@@ -258,7 +259,7 @@ int ezthork (
 	int (*parentcb) (pthread_t, void *), void *parentcb_args) {
 	pthread_t pid;
 
-	pthread_create (&pid, NULL, childcb, childcb_args);
+	if (pthread_create (&pid, NULL, childcb, childcb_args) != 0) return -1;
 	if (parentcb (pid, parentcb_args) != 0)
 		   return -3;
 	return 0;
@@ -285,7 +286,11 @@ static int command (pipeline_t *cmd, fd_t **input, bool first, bool last) {
 	if (cmd->input_n != cmd->output_n)
 		return -3;
 	threll_pipe (pipettes + 0, pipettes + 1, cmd->input_esz, cmd->input_n);*/
-	threll_pipe (pipettes + 0, pipettes + 1, cmd->output_esz, cmd->output_n);
+	if (threll_pipe (pipettes + 0, pipettes + 1, cmd->output_esz, cmd->output_n) != 0) {
+		free (cargs);
+		free (pipettes);
+		return -3;
+	}
 	/*(void) pipe (pipettes);*/
 
 	cargs->first = first;
@@ -312,7 +317,9 @@ static int command (pipeline_t *cmd, fd_t **input, bool first, bool last) {
 	/* *input = pargs.rd;*/
 
 	if (ezthork (childcommon, cargs, parentcb, &pargs) != 0) {
-		return -1;
+		free (cargs);
+		free (pipettes);
+		return -4;
 	}
 	cmd->cpid = pargs.cpid;
 	/*
@@ -347,7 +354,7 @@ int pipeline (pipeline_t cmds[], size_t ncmd) {
 	for (i = 0; i != ncmd; i++) {
 		pthread_t cpid = cmds[i].cpid;
 		if (pthread_join (cpid, NULL) != 0)
-			return -1;
+			return -3;
 		/* free queue */
 		/*
 		if (cmds[i].stdin != io)
@@ -390,7 +397,10 @@ int thserver (
 		void *intmp;
 		void *outtmp;
 		/* if can't dequeue, then block til ready */
-		if (inq != NULL) pthread_mutex_lock (&(inq->io->mutex));
+		if (inq != NULL) {
+			if (pthread_mutex_lock (&(inq->io->mutex)) != 0)
+				return -1;
+		}
 		/*if (inq != NULL && isempty (inq->io))
 			pthread_cond_wait(&(inq->io->empty), &(inq->io->mutex));
 		if (inq != NULL && isempty (inq->io)) {
@@ -400,22 +410,24 @@ int thserver (
 		}*/
 		if (inq != NULL)
 			do {
-				pthread_mutex_unlock (&(inq->io->mutex));
-				sem_wait (&(inq->io->empty));
-				pthread_mutex_lock (&(inq->io->mutex));
+				if (pthread_mutex_unlock (&(inq->io->mutex)) != 0) return -2;
+				if (sem_wait (&(inq->io->empty)) != 0) return -3;
+				if (pthread_mutex_lock (&(inq->io->mutex)) != 0) return -4;
 			} while (isempty (inq->io)) ;
 		if (inq != NULL) {
 			intmp  = dequeue (&(inq->io->io));
 			/*pthread_cond_signal (&(inq->io->full));*/
-			sem_post (&(inq->io->full));
+			if (sem_post (&(inq->io->full)) != 0) return -5;
 		} else intmp = NULL;
 
-		if (outq != NULL) pthread_mutex_lock (&(outq->io->mutex));
+		if (outq != NULL) {
+			if (pthread_mutex_lock (&(outq->io->mutex)) != 0) return -5;
+		}
 		if (outq != NULL)
 			do {
-				pthread_mutex_unlock (&(outq->io->mutex));
-				sem_wait (&(outq->io->full));
-				pthread_mutex_lock (&(outq->io->mutex));
+				if (pthread_mutex_unlock (&(outq->io->mutex)) != 0) return -6;
+				if (sem_wait (&(outq->io->full)) != 0) return -7;
+				if (pthread_mutex_lock (&(outq->io->mutex)) != 0) return -8;
 			} while (isfull (outq->io)) ;
 		/*
 		while (outq != NULL && isfull (outq->io))
@@ -424,12 +436,16 @@ int thserver (
 		if (outq != NULL) {
 			outtmp = enqueue (&(outq->io->io));
 			/*pthread_cond_signal (&(outq->io->empty));*/
-			sem_post (&(outq->io->empty));
+			if (sem_post (&(outq->io->empty)) != 0) return -9;
 		} else outtmp = NULL;
 
 		if (cb (intmp, outtmp) != 0) return -1;
-		if (outq != NULL) pthread_mutex_unlock (&(outq->io->mutex));
-		if (inq != NULL) pthread_mutex_unlock (&(inq->io->mutex));
+		if (outq != NULL) {
+			if (pthread_mutex_unlock (&(outq->io->mutex)) != 0) return -10;
+		}
+		if (inq != NULL) {
+			if (pthread_mutex_unlock (&(inq->io->mutex)) != 0) return -11;
+		}
 
 		/* TODO the example moves the sem_post() to after the mutex_unlock() */
 		/*sem_post (&(inq->io->full));
@@ -467,9 +483,11 @@ static int exec_pipelinecb (fd_t *input, fd_t *rd, fd_t *wr,
 		cmdinput = input;
 
 	/*execvp (argv[0], argv);*/
-	thserver (cmdinput, cmdoutput, argv);
-	return -1;
+	if (thserver (cmdinput, cmdoutput, argv) != 0)
+		return -1;
+	/*return -1;*/
 	/*return closure->cb (closure->arg);*/
+	return 0;
 }
 
 
@@ -477,6 +495,7 @@ static int exec_pipelinecb (fd_t *input, fd_t *rd, fd_t *wr,
 int exec_pipeline (thserver_t *argvs, size_t nargv) {
 	pipeline_t *cmds = malloc (nargv * sizeof (pipeline_t)
 	+ nargv * sizeof (exec_pipelinecb_t));
+	if (cmds == NULL) return -1;
 	exec_pipelinecb_t *tmps = (exec_pipelinecb_t *) (cmds + nargv);
 	size_t i;
 	for (i = 0; i != nargv; i++) {
@@ -492,7 +511,7 @@ int exec_pipeline (thserver_t *argvs, size_t nargv) {
 	/*puts ("exec_pipeline ()");*/
 	if (pipeline (cmds, nargv) != 0) {
 		/*puts ("exec_pipeline failed");*/
-		return -1;
+		return -2;
 	}
 	/*puts ("exec_pipeline success");*/
 	free (cmds);

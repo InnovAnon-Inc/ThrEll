@@ -1,6 +1,10 @@
 #ifndef _THRELL_H_
 #define _THRELL_H_
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include <stdbool.h>
 #include <sys/types.h>
 
@@ -96,5 +100,9 @@ int pipeline (pipeline_t cmds[], size_t ncmd) ;
 /*int fork_and_wait2 (
 	int (*childcb)  (void *), void *childcb_args,
 	int (*parentcb) (void *), void *parentcb_args) ;*/
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* _THRELL_H_ */
