@@ -411,7 +411,7 @@ int thserver (
 		if (inq != NULL) {
 			intmp  = dequeue (&(inq->io->io));
 			/*pthread_cond_signal (&(inq->io->full));*/
-			/*sem_post (&(inq->io->full));*/
+			sem_post (&(inq->io->full));
 		} else intmp = NULL;
 
 		if (outq != NULL) pthread_mutex_lock (&(outq->io->mutex));
@@ -428,7 +428,7 @@ int thserver (
 		if (outq != NULL) {
 			outtmp = enqueue (&(outq->io->io));
 			/*pthread_cond_signal (&(outq->io->empty));*/
-			/*sem_post (&(outq->io->empty));*/
+			sem_post (&(outq->io->empty));
 		} else outtmp = NULL;
 
 		if (cb (intmp, outtmp) != 0) return -1;
@@ -436,8 +436,8 @@ int thserver (
 		if (inq != NULL) pthread_mutex_unlock (&(inq->io->mutex));
 
 		/* TODO the example moves the sem_post() to after the mutex_unlock() */
-		sem_post (&(inq->io->full));
-		sem_post (&(outq->io->empty));
+		/*sem_post (&(inq->io->full));
+		sem_post (&(outq->io->empty));*/
 	}
 	return 0;
 }
