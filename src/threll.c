@@ -431,7 +431,7 @@ static int th_writecb (void *wr, void *_arg) {
 static int th_readcb (void *rd, void *_arg) {
 	th_readcb_t *arg = (th_readcb_t *) _arg;
 	arg->rd = rd;
-	th_write (arg->outq, th_writecb, (void *) arg)
+	th_write (arg->outq, th_writecb, (void *) arg);
 }
 
 int thserver (
