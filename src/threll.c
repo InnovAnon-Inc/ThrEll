@@ -3,6 +3,7 @@
 #include <sys/wait.h>
 #include <unistd.h>
 #include <stdlib.h>
+#include <limits.h>
 
 /*#include <ezfork.h>*/
 
@@ -149,7 +150,9 @@ int threll_close (fd_t *fd) {
 	return 0;
 }
 int threll_pipe (fd_t *input, fd_t *output, size_t esz, size_t n) {
-	pipe_t *pipe = malloc (sizeof (pipe_t));
+	pipe_t *pipe;
+	if (n > UINT_MAX) return -5;
+	pipe = malloc (sizeof (pipe_t));
 	if (pipe == NULL) return -1;
 	pipe->nreader = 1;
 	pipe->nwriter = 1;
@@ -163,7 +166,7 @@ int threll_pipe (fd_t *input, fd_t *output, size_t esz, size_t n) {
 	pipe->mutex = (pthread_mutex_t) PTHREAD_MUTEX_INITIALIZER;
 	/*pthread_cond_init (&(pipe->empty), NULL);
 	pthread_cond_init (&(pipe->full), NULL);*/
-	if (sem_init (&(pipe->full), 0, n) != 0) return -3;
+	if (sem_init (&(pipe->full), 0, (unsigned int) n) != 0) return -3;
 	if (sem_init (&(pipe->empty), 0, 0) != 0) return -4;
 	return 0;
 }
