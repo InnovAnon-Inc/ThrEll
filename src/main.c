@@ -18,6 +18,14 @@ typedef struct {
 static int cb (void *_input, void *_output) {
 	input_t *input = (input_t *) _input;
 	output_t *output = (output_t *) _output;
+	if (input == NULL) {
+		puts ("unexpected NULL input");
+		return -1;
+	}
+	if (output == NULL) {
+		puts ("unexpected NULL output");
+		return -2;
+	}
 	output->x = (double) (input->x);
 	return 0;
 }
