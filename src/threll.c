@@ -142,6 +142,7 @@ int threll_close (fd_t *fd) {
 	if (pthread_mutex_destroy (&(pipe->mutex)) != 0) return -4;
 	if (sem_destroy (&(pipe->full)) != 0) return -5;
 	if (sem_destroy (&(pipe->empty)) != 0) return -6;
+	/*if (pthread_cond_destroy (&(pipe->done)) != 0) return -7;*/
 	free (pipe);
 	if (IS_FD_RD (fd))
 		free (fd);
@@ -168,6 +169,8 @@ int threll_pipe (fd_t *input, fd_t *output, size_t esz, size_t n) {
 	pthread_cond_init (&(pipe->full), NULL);*/
 	if (sem_init (&(pipe->full), 0, (unsigned int) n) != 0) return -3;
 	if (sem_init (&(pipe->empty), 0, 0) != 0) return -4;
+	/*pipe->done = (pthread_cond_t) PTHREAD_COND_INITIALIZER;*/
+	/*pipe->done = false;*/
 	return 0;
 }
 
@@ -394,6 +397,7 @@ static int th_read (fd_t *inq, int (*cb) (void *, void *), void *arg) {
 	} while (isempty (&(inq->io->io))) ;
 	if (cb (dequeue (&(inq->io->io)), arg) != 0) {
 		/*sem_post (&(inq->io->full));*/
+		/*inq->io->done = true;*/
 		pthread_mutex_unlock (&(inq->io->mutex));
 		return -5;
 	}
@@ -418,6 +422,7 @@ static int th_write (fd_t *outq, int (*cb) (void *, void *), void *arg) {
 	} while (isfull (&(outq->io->io))) ;
 	if (cb (enqueue (&(outq->io->io)), arg) != 0) {
 		/*sem_post (&(outq->io->empty));*/
+		/*outq->io->done = true;*/
 		pthread_mutex_unlock (&(outq->io->mutex));
 		return -5;
 	}
@@ -454,7 +459,11 @@ int thserver (
 		th_readcb_t th_readcb_arg;
 		th_readcb_arg.outq = outq;
 		th_readcb_arg.cb = cb;
-		if (th_read (inq, th_readcb, (void *) &th_readcb_arg) != 0) return -1;
+		if (th_read (inq, th_readcb, (void *) &th_readcb_arg) != 0) {
+			free (outq);
+			free (inq);
+			return -1;
+		}
 #ifdef OTHER_STUFF
 		/*
 		pthread_mutex_lock (&(inq->io->mutex));
