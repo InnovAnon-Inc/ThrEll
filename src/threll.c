@@ -563,6 +563,8 @@ int thserver (
 		sem_post (&(outq->io->empty));*/
 #endif
 	}
+	free (inq);
+	free (outq);
 	return 0;
 }
 
