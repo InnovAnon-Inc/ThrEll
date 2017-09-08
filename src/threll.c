@@ -431,7 +431,7 @@ static int th_writecb (void *wr, void *_arg) {
 static int th_readcb (void *rd, void *_arg) {
 	th_readcb_t *arg = (th_readcb_t *) _arg;
 	arg->rd = rd;
-	th_write (arg->outq, arg)
+	th_write (arg->outq, (void *) arg)
 }
 
 int thserver (
@@ -442,7 +442,7 @@ int thserver (
 		th_readcb_t th_readcb_arg;
 		th_readcb_arg.outq = outq;
 		th_readcb_arg.cb = cb;
-		if (th_read (inq, th_readcb) != 0) return -1;
+		if (th_read (inq, th_readcb, (void *) &th_readcb_arg) != 0) return -1;
 #ifdef OTHER_STUFF
 		/*
 		pthread_mutex_lock (&(inq->io->mutex));
