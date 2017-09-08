@@ -23,14 +23,16 @@ static int cb (void *_input, void *_output) {
 }
 
 static int rdcb (void *unused, void *_output) {
-	int *output = (int *) _output;
+	/*int *output = (int *) _output;*/
+	int *output = &(((input_t *) _output)->x);
 	read (STDIN_FILENO, output, sizeof (int));
 	/*printf ("read:%d\n", *output);*/
 	return 0;
 }
 
 static int wrcb (void *_input, void *unused) {
-	double *input = (double *) _input;
+	/*double *input = (double *) _input;*/
+	double *input = &(((output_t *) _input)->x);
 	write (STDOUT_FILENO, input, sizeof (double));
 	/*fflush (stdout);
 	printf ("write:%g\n", *input);*/
