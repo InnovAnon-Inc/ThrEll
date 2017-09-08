@@ -59,7 +59,7 @@ int main (void) {
 	argvs[0].input_esz = 0;
 	argvs[0].input_n   = 0;
 	argvs[0].output_esz = sizeof (int);
-	argvs[0].output_n   = 3;
+	argvs[0].output_n   = 2;
 
 	argvs[1].cb = cb;
 	argvs[1].input_esz = argvs[0].output_esz;
