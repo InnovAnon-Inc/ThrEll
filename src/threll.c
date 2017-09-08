@@ -259,11 +259,11 @@ typedef struct {
 
 int ezthork (
 	void *(*childcb)  (void *),        void *childcb_args,
-	int (*parentcb) (pthread_t, void *), void *parentcb_args) {
+	int (*_parentcb) (pthread_t, void *), void *parentcb_args) {
 	pthread_t pid;
 
 	if (pthread_create (&pid, NULL, childcb, childcb_args) != 0) return -1;
-	if (parentcb (pid, parentcb_args) != 0)
+	if (_parentcb (pid, parentcb_args) != 0)
 		   return -3;
 	return 0;
 }
@@ -367,7 +367,8 @@ int pipeline (pipeline_t cmds[], size_t ncmd) {
 	return 0;
 }
 
-int ring () {
+__attribute__ ((const))
+int ring (void) {
 	return -2;
 }
 

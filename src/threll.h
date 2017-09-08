@@ -15,6 +15,9 @@ extern "C" {
 
 /* exec_pipeline, exec_ring */
 
+int ring (void)
+__attribute__ ((const)) ;
+
 /* ---------- */
 
 /* ring, command, pipeline */
@@ -75,6 +78,10 @@ typedef struct {
 
 int pipeline (pipeline_t cmds[], size_t ncmd) ;
 
+int thserver (
+	fd_t *inq, fd_t *outq,
+	thservercb cb) ;
+
 /* ---------- */
 
 /* fork a process
@@ -101,6 +108,12 @@ int pipeline (pipeline_t cmds[], size_t ncmd) ;
 /*int fork_and_wait2 (
 	int (*childcb)  (void *), void *childcb_args,
 	int (*parentcb) (void *), void *parentcb_args) ;*/
+
+/* ---------- */
+
+int ezthork (
+	void *(*childcb)  (void *),        void *childcb_args,
+	int (*parentcb) (pthread_t, void *), void *parentcb_args) ;
 
 #ifdef __cplusplus
 }
