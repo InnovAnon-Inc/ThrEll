@@ -61,6 +61,7 @@ int exec_pipeline (thserver_t *argvs, size_t nargv) ;
 
 int threll_close (fd_t *fd) ;
 int threll_pipe (fd_t *input, fd_t *output, size_t esz, size_t n) ;
+void threll_cp (fd_t *dest, fd_t *src) ;
 
 typedef struct {
 	int (*cb) (fd_t *, fd_t *, fd_t *, bool, bool, void *);
