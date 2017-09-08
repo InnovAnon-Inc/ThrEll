@@ -422,29 +422,39 @@ int thserver (
 			intmp  = dequeue (&(inq->io->io));
 			/*pthread_cond_signal (&(inq->io->full));*/
 			if (sem_post (&(inq->io->full)) != 0) {
+#ifdef DO_CLEANUP
 				pthread_mutex_unlock (&(inq->io->mutex));
+#endif
 				return -5;
 			}
 		} else intmp = NULL;
 
 		if (outq != NULL) {
 			if (pthread_mutex_lock (&(outq->io->mutex)) != 0) {
-				pthread_mutex_unlock (&(inq->io->mutex));
+#ifdef DO_CLEANUP
+				if (inq != NULL) pthread_mutex_unlock (&(inq->io->mutex));
+#endif
 				return -5;
 			}
 		}
 		if (outq != NULL)
 			do {
 				if (pthread_mutex_unlock (&(outq->io->mutex)) != 0) {
-					pthread_mutex_unlock (&(inq->io->mutex));
+#ifdef DO_CLEANUP
+					if (inq != NULL) pthread_mutex_unlock (&(inq->io->mutex));
+#endif
 					return -6;
 				}
 				if (sem_wait (&(outq->io->full)) != 0) {
-					pthread_mutex_unlock (&(inq->io->mutex));
+#ifdef DO_CLEANUP
+					if (inq != NULL) pthread_mutex_unlock (&(inq->io->mutex));
+#endif
 					return -7;
 				}
 				if (pthread_mutex_lock (&(outq->io->mutex)) != 0) {
-					pthread_mutex_unlock (&(inq->io->mutex));
+#ifdef DO_CLEANUP
+					if (inq != NULL) pthread_mutex_unlock (&(inq->io->mutex));
+#endif
 					return -8;
 				}
 			} while (isfull (&(outq->io->io))) ;
@@ -456,20 +466,22 @@ int thserver (
 			outtmp = enqueue (&(outq->io->io));
 			/*pthread_cond_signal (&(outq->io->empty));*/
 			if (sem_post (&(outq->io->empty)) != 0) {
+#ifdef DO_CLEANUP
 				pthread_mutex_unlock (&(outq->io->mutex));
-				pthread_mutex_unlock (&(inq->io->mutex));
+				if (inq != NULL) pthread_mutex_unlock (&(inq->io->mutex));
+#endif
 				return -9;
 			}
 		} else outtmp = NULL;
 
 		if (cb (intmp, outtmp) != 0) {
-			pthread_mutex_unlock (&(outq->io->mutex));
-			pthread_mutex_unlock (&(inq->io->mutex));
+			if (outq != NULL) pthread_mutex_unlock (&(outq->io->mutex));
+			if (inq != NULL) pthread_mutex_unlock (&(inq->io->mutex));
 			return -1;
 		}
 		if (outq != NULL) {
 			if (pthread_mutex_unlock (&(outq->io->mutex)) != 0) {
-				pthread_mutex_unlock (&(inq->io->mutex));
+				if (inq != NULL) pthread_mutex_unlock (&(inq->io->mutex));
 				return -10;
 			}
 		}
