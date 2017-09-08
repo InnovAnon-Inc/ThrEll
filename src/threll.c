@@ -128,7 +128,7 @@ int threll_close (fd_t *fd) {
 		pipe->nwriter--;
 	if (pipe->nreader != 0) {
 		/* TODO see below */
-		/*free (fd);*/
+		free (fd);
 		return 0;
 	}
 	if (pipe->nwriter != 0)
@@ -137,10 +137,13 @@ int threll_close (fd_t *fd) {
 	/* TODO I think we're re-freeing here,
 	 * because parent & child both free "file descriptors"
 	 * multiprocessing vs multithreading */
-	/*free_queue (&(pipe->io));
+	free_queue (&(pipe->io));
+	pthread_mutex_destroy (&(pipe->mutex));
+	sem_destroy (&(pipe->full));
+	sem_destroy (&(pipe->empty));
 	free (pipe);
 	if (IS_FD_RD (fd))
-		free (fd);*/
+		free (fd);
 	/* pthread_mutex_destroy */
 	/* pthread_cond_destroy */
 	return 0;
@@ -189,9 +192,10 @@ static int parentcb (pthread_t cpid, void *cbargs) {
 	fd_t *rd = args->rd;
 	args->cpid = cpid;
 
+	/* TODO
 	threll_close (input);
 	threll_close (wr);
-	if (last) threll_close (rd);
+	if (last) threll_close (rd);*/
 	return 0;
 }
 
@@ -224,16 +228,8 @@ static void *childcommon (void *tmp) {
 	int (*cb) (fd_t *, fd_t *, fd_t *, bool, bool, void *);
 	void *cbarg;
 	int err;
-	if (input == NULL) puts ("input is NULL");
-	if (rd == NULL) puts ("rd is NULL");
-	if (wr == NULL) puts ("wr is NULL");
-	if (cmd == NULL) puts ("cmd is NULL");
 	cb = cmd->cb;
-	if (cb == NULL) puts ("cb is NULL");
 	cbarg = cmd->arg;
-	if (cbarg == NULL) puts ("cbarg is NULL");
-	if (first) puts ("first is true");
-	if (last) puts ("last is true");
 	err = cb (input, rd, wr, first, last, cbarg);
 	if (err != 0) {
 		/*return -1;*/
