@@ -380,13 +380,70 @@ int ring (void) {
 
 
 
+int th_read (fd_t *inq, int (*cb) (void *, void *), void *arg) {
+	if (pthread_mutex_lock (&(inq->io->mutex)) != 0) return -1;
+	do {
+		if (pthread_mutex_unlock (&(inq->io->mutex)) != 0) return -2;
+		if (sem_wait (&(inq->io->empty)) != 0) return -3;
+		if (pthread_mutex_lock (&(inq->io->mutex)) != 0) return -4;
+	} while (isempty (&(inq->io->io))) ;
+	if (cb (dequeue (&(inq->io->io)), arg) != 0) {
+		pthread_mutex_unlock (&(inq->io->mutex));
+		return -5;
+	}
+	if (sem_post (&(inq->io->full)) != 0) {
+		pthread_mutex_unlock (&(inq->io->mutex));
+		return -6;
+	}
+	if (pthread_mutex_unlock (&(inq->io->mutex)) != 0) return -7;
+	return 0;
+}
+int th_write (fd_t *outq, int (*cb) (void *, void *), void *arg) {
+	if (pthread_mutex_lock (&(outq->io->mutex)) != 0) return -1;
+	do {
+		if (pthread_mutex_unlock (&(outq->io->mutex)) != 0) return -2;
+		if (sem_wait (&(outq->io->full)) != 0) return -3;
+		if (pthread_mutex_lock (&(outq->io->mutex)) != 0) return -4;
+	} while (isfull (&(outq->io->io))) ;
+	if (cb (enqueue (&(outq->io->io)), arg) != 0) {
+		pthread_mutex_unlock (&(outq->io->mutex));
+		return -5;
+	}
+	if (sem_post (&(outq->io->empty)) != 0) {
+		pthread_mutex_unlock (&(outq->io->mutex));
+		return -6;
+	}
+	if (pthread_mutex_unlock (&(outq->io->mutex)) != 0) return -7;
+	return 0;
+}
 
+
+
+typedef struct {
+	void *rd;
+	void *wr;
+	fd_t *outq;
+} th_readcb_t;
+static int th_writecb (void *wr, void *_arg) {
+	th_readcb_t *arg = (th_readcb_t *) _arg;
+	arg->wr = wr;
+	return cb (arg->rd, arg->wr);
+}
+static int th_readcb (void *rd, void *_arg) {
+	th_readcb_t *arg = (th_readcb_t *) _arg;
+	arg->rd = rd;
+	th_write (arg->outq, arg)
+}
 
 int thserver (
 	fd_t *inq, fd_t *outq,
 	thservercb cb) {
 	/* while inq is open */
 	while (true) { /* while ! isempty (inq) ? ... + mutex */
+		th_readcb_t th_readcb_arg;
+		th_readcb_arg.outq = outq;
+		if (th_read (inq, th_readcb) != 0) return -1;
+#ifdef OTHER_STUFF
 		/*
 		pthread_mutex_lock (&(inq->io->mutex));
 		memcpy (intmp, dequeue (inq), inq->esz);
@@ -492,6 +549,7 @@ int thserver (
 		/* TODO the example moves the sem_post() to after the mutex_unlock() */
 		/*sem_post (&(inq->io->full));
 		sem_post (&(outq->io->empty));*/
+#endif
 	}
 	return 0;
 }
