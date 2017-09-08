@@ -441,6 +441,7 @@ int thserver (
 	while (true) { /* while ! isempty (inq) ? ... + mutex */
 		th_readcb_t th_readcb_arg;
 		th_readcb_arg.outq = outq;
+		th_readcb_arg.cb = cb;
 		if (th_read (inq, th_readcb) != 0) return -1;
 #ifdef OTHER_STUFF
 		/*
