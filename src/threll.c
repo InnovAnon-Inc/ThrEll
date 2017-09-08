@@ -417,7 +417,7 @@ int thserver (
 				if (pthread_mutex_unlock (&(inq->io->mutex)) != 0) return -2;
 				if (sem_wait (&(inq->io->empty)) != 0) return -3;
 				if (pthread_mutex_lock (&(inq->io->mutex)) != 0) return -4;
-			} while (isempty (inq->io)) ;
+			} while (isempty (inq->io->io)) ;
 		if (inq != NULL) {
 			intmp  = dequeue (&(inq->io->io));
 			/*pthread_cond_signal (&(inq->io->full));*/
@@ -432,7 +432,7 @@ int thserver (
 				if (pthread_mutex_unlock (&(outq->io->mutex)) != 0) return -6;
 				if (sem_wait (&(outq->io->full)) != 0) return -7;
 				if (pthread_mutex_lock (&(outq->io->mutex)) != 0) return -8;
-			} while (isfull (outq->io)) ;
+			} while (isfull (outq->io->io)) ;
 		/*
 		while (outq != NULL && isfull (outq->io))
 			pthread_cond_wait (&(outq->io->full), &(outq->io->mutex));
