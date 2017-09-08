@@ -421,11 +421,12 @@ typedef struct {
 	void *rd;
 	void *wr;
 	fd_t *outq;
+	int (*cb) (void *, void *) ;
 } th_readcb_t;
 static int th_writecb (void *wr, void *_arg) {
 	th_readcb_t *arg = (th_readcb_t *) _arg;
 	arg->wr = wr;
-	return cb (arg->rd, arg->wr);
+	return arg->cb (arg->rd, arg->wr);
 }
 static int th_readcb (void *rd, void *_arg) {
 	th_readcb_t *arg = (th_readcb_t *) _arg;
