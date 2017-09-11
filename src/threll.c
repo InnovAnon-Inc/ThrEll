@@ -1,3 +1,7 @@
+#if HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include <stdbool.h>
 
 #include <sys/wait.h>
@@ -7,7 +11,7 @@
 
 /*#include <ezfork.h>*/
 
-#include "threll.h"
+#include <threll.h>
 
 /*
 pipe_t stdpipe;
@@ -460,8 +464,8 @@ int thserver (
 		th_readcb_arg.outq = outq;
 		th_readcb_arg.cb = cb;
 		if (th_read (inq, th_readcb, (void *) &th_readcb_arg) != 0) {
-			free (outq);
-			free (inq);
+			/*free (outq);
+			free (inq);*/
 			return -1;
 		}
 #ifdef OTHER_STUFF

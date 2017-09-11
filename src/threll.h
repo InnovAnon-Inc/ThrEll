@@ -35,7 +35,7 @@ typedef struct {
 	size_t nwriter;
 	pthread_mutex_t mutex;
 	sem_t empty, full;
-	bool done;
+	/*bool done;*/
 } pipe_t;
 
 typedef struct {
