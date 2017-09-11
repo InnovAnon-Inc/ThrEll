@@ -9,3 +9,5 @@ threll_test_SOURCES = main.c
 threll_test_LDFLAGS = -lcaq -lpthread
 threll_test_LDADD = libthrell.la
 #threll_test_CFLAGS =
+
+AM_CPPFLAGS = -D__STDC_INT64__

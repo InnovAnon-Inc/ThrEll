@@ -17,6 +17,7 @@ if [ $# -eq 0 ] ; then exit 0
 else
 	test "x$1" == xmake
 	DIR="$(readlink -f `pwd`)"
+	rm -fr ../ThrEll-build
 	mkdir ../ThrEll-build
 	cd ../ThrEll-build
 	"$DIR/configure" "--prefix=$HOME"
