@@ -174,7 +174,10 @@ static void *childcommon (void *restrict tmp) {
 	int err;
 	cb = cmd->cb;
 	cbarg = cmd->arg;
+	#pragma GCC diagnostic push
+	#pragma GCC diagnostic ignored "-Wtraditional-conversion"
 	err = cb (input, rd, wr, first, last, cbarg);
+	#pragma GCC diagnostic pop
 	error_check (err != 0) {
 		/*return -1;*/
 		return NULL;
@@ -287,11 +290,17 @@ int pipeline (pipeline_t cmds[], size_t ncmd) {
 	size_t i;
 
 	for (i = 0; i != ncmd - 1; i++) {
+	#pragma GCC diagnostic push
+	#pragma GCC diagnostic ignored "-Wtraditional-conversion"
 		error_check (command (cmds + i, &input, first, false) != 0)
+	#pragma GCC diagnostic pop
 			return -1;
 		first = false;
 	}
+	#pragma GCC diagnostic push
+	#pragma GCC diagnostic ignored "-Wtraditional-conversion"
 	error_check (command (cmds + i, &input, first, true) != 0)
+	#pragma GCC diagnostic pop
 		return -2;
 	for (i = 0; i != ncmd; i++) {
 		pthread_t cpid = cmds[i].cpid;
