@@ -116,7 +116,7 @@ int main (void) {
 
 	/*error_check (pthread_join (io_thread, NULL) != 0) return EXIT_FAILURE;*/
 
-	error_check (free_io (&io) != 0) return EXIT_FAILURE;
+	/*error_check (free_io (&io) != 0) return EXIT_FAILURE;*/
 
 	return EXIT_SUCCESS;
 }
