@@ -24,17 +24,9 @@ static int cb (
 	buffer_t *restrict buf_out,
 	buffer_t const *restrict buf_in,
 	void *restrict unused) {
-	input_t *restrict input = (input_t *restrict) _input;
-	output_t *restrict output = (output_t *restrict) _output;
-	if (input == NULL) {
-		puts ("unexpected NULL input");
-		return -1;
-	}
-	if (output == NULL) {
-		puts ("unexpected NULL output");
-		return -2;
-	}
-	output->x = (double) (input->x);
+	/*output->x = (double) (input->x);*/
+	buf_out->n = min (buf_in->n, buf_out->n);
+	memcpy (dest, src, buf_out->n);
 	return 0;
 }
 
