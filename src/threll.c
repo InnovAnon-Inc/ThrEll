@@ -151,7 +151,7 @@ int threll (
 		return -4;
 	}
 	for (i = 0; i != ncmd; i++) {
-		worker_thread_cb_arg[i].io = mid + 0;
+		worker_thread_cb_arg[i].io = mid + i;
 		worker_thread_cb_arg[i].cb = cmds[i].cb;
 		error_check (pthread_create (worker_thread + i, NULL, worker_thread_cb, /*&src*/ /*&dest*/ worker_thread_cb_arg + i) != 0) {
 			TODO (kill io thread)
