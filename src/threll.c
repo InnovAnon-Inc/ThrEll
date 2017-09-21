@@ -132,15 +132,16 @@ int threll (
    }
 
 
+	init_io (mid + 0, dest.in, pipes + 0);
+	for (i = 1; i != ncmd - 1 - 1; i++)
+		init_io (mid + i, pipes + i - 1, pipes + i);
+	init_io (mid + i, pipes + i - 1, dest.out);
+
 	for (i = 0; i != ncmd - 1; i++)
 		error_check (alloc_pipe (pipes + i, cmds[i].output_esz, cmds[i].output_n) != 0) {
 			return -3;
 		}
 		/*alloc_pipe (pipes + i, cmds[i + 1].input_esz, cmds[i + 1].input_n);*/
-	init_io (mid + 0, dest.in, pipes + 0);
-	for (i = 1; i != ncmd - 1 - 1; i++)
-		init_io (mid + i, pipes + i - 1, pipes + i);
-	init_io (mid + i, pipes + i - 1, dest.out);
 
 	worker_thread = malloc (ncmd * sizeof (pthread_t));
 	error_check (worker_thread == NULL) {
