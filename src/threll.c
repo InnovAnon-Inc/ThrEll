@@ -145,7 +145,7 @@ int threll (
 	for (i = 0; i != ncmd; i++) {
 		worker_thread_cb_arg[i].io = mid + 0;
 		worker_thread_cb_arg[i].cb = cmds[i].cb;
-		error_check (pthread_create (worker_thread + i, NULL, worker_thread_cb + i, /*&src*/ /*&dest*/ worker_thread_cb_arg + i) != 0) {
+		error_check (pthread_create (worker_thread + i, NULL, worker_thread_cb, /*&src*/ /*&dest*/ worker_thread_cb_arg + i) != 0) {
 			TODO (kill io thread)
 	#pragma GCC diagnostic push
 	#pragma GCC diagnostic ignored "-Wunused-result"
