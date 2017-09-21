@@ -30,10 +30,7 @@
 
 
 
-typedef __attribute__ ((nonnull (1, 2, 4), /*nothrow,*/ warn_unused_result))
-int (*threll_cb_t) (
-   void *restrict dest,
-   void const *restrict src, size_t srcsz, size_t *restrict destsz) ;
+
 
 	#pragma GCC diagnostic push
 	#pragma GCC diagnostic ignored "-Wpadded"

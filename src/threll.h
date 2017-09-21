@@ -10,6 +10,7 @@ extern "C" {
 #include <pthread.h>
 
 #include <glitter.h>
+#include <pipe.h>
 #include <io.h>
 
 /* exec_pipeline, exec_ring */
@@ -58,6 +59,11 @@ int (*pipeline_cb_t) (
 	pipe_t *restrict,
 	pipe_t *restrict,
 	void *restrict);
+
+typedef __attribute__ ((nonnull (1, 2, 4), /*nothrow,*/ warn_unused_result))
+int (*threll_cb_t) (
+   void *restrict dest,
+   void const *restrict src, size_t srcsz, size_t *restrict destsz) ;
 
 	#pragma GCC diagnostic push
 	#pragma GCC diagnostic ignored "-Wpadded"
