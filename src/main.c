@@ -19,9 +19,13 @@ typedef struct {
 	double x;
 } output_t;
 
-static int cb (void *_input, void *_output) {
-	input_t *input = (input_t *) _input;
-	output_t *output = (output_t *) _output;
+__attribute__ ((nonnull (1, 2), nothrow, warn_unused_result))
+static int cb (
+	buffer_t *restrict buf_out,
+	buffer_t const *restrict buf_in,
+	void *restrict unused) {
+	input_t *restrict input = (input_t *restrict) _input;
+	output_t *restrict output = (output_t *restrict) _output;
 	if (input == NULL) {
 		puts ("unexpected NULL input");
 		return -1;
@@ -34,26 +38,20 @@ static int cb (void *_input, void *_output) {
 	return 0;
 }
 
-static int rdcb (void *unused, void *_output) {
-	/*int *output = (int *) _output;*/
-	int *output = &(((input_t *) _output)->x);
-	ssize_t rd = read (STDIN_FILENO, output, sizeof (int));
-	if (rd != sizeof (int)) return -1;
-	/*printf ("read:%d\n", *output);*/
-	return 0;
+__attribute__ ((nonnull (1, 2), nothrow, warn_unused_result))
+static int rdcb (
+	buffer_t *restrict buf_out,
+	buffer_t const *restrict buf_in,
+	void *restrict arg) {
+	TODO (?)
 }
 
-static int wrcb (void *_input, void *unused) {
-	/*double *input = (double *) _input;*/
-	double *input;
-	ssize_t wr;
-	if (_input == NULL) return -1;
-	input = &(((output_t *) _input)->x);
-	wr = write (STDOUT_FILENO, input, sizeof (double));
-	if (wr != sizeof (double)) return -2;
-	/*fflush (stdout);
-	printf ("write:%g\n", *input);*/
-	return 0;
+__attribute__ ((nonnull (1, 2), nothrow, warn_unused_result))
+static int wrcb (
+   buffer_t *restrict buf_out,
+   buffer_t const *restrict buf_in,
+   void *restrict arg) {
+	TODO (?)
 }
 
 int main (void) {
