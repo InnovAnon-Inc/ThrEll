@@ -125,7 +125,10 @@ static int command (
 	}*/
 	cargs = malloc (sizeof (childcommon_t));
 	error_check (cargs == NULL) {
-		free (pipettes);
+	#pragma GCC diagnostic push
+	#pragma GCC diagnostic ignored "-Wunused-result"
+		(void) free_io (&pipettes);
+	#pragma GCC diagnostic pop
 		return -2;
 	}
 
@@ -176,7 +179,10 @@ static int command (
 
 	error_check (ezthork (childcommon, cargs, parentcb, &pargs) != 0) {
 		free (cargs);
-		free (pipettes);
+	#pragma GCC diagnostic push
+	#pragma GCC diagnostic ignored "-Wunused-result"
+		(void) free_io (&pipettes);
+	#pragma GCC diagnostic pop
 		return -4;
 	}
 	cmd->cpid = pargs.cpid;
