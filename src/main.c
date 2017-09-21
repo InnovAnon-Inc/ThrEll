@@ -101,6 +101,9 @@ int main (void) {
 	argvs[2].output_esz = out_bufsz;
 	argvs[2].output_n   = out_nbuf;
 
+	rw_io_arg.io = &io;
+	rw_io_arg.rd = STDIN_FILENO;
+	rw_io_arg.wr = STDOUT_FILENO;
 	error_check (pthread_create (
 		&io_thread, NULL, rw_io_wrapper, &rw_io_arg) != 0)
 		return EXIT_FAILURE;
