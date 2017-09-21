@@ -173,7 +173,8 @@ static int command (
 	pargs.last = last;
 
 	/* *input = pipettes[0];*/
-	*input = pipettes + 0;
+	/* *input = pipettes + 0;*/
+	*input = pipettes.in;
 	/*threll_cp (*input, pipetts + 0);*/
 	/* *input = pargs.rd;*/
 
