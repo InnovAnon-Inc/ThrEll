@@ -19,7 +19,7 @@ typedef struct {
 	double x;
 } output_t;
 
-typedef __attribute__ ((nonnull (1, 2, 4), nothrow, warn_unused_result))
+__attribute__ ((nonnull (1, 2, 4), nothrow, warn_unused_result))
 static int cb (
 	void *restrict dest,
 	void const *restrict src,
@@ -30,7 +30,7 @@ static int cb (
 	return 0;
 }
 
-typedef __attribute__ ((nonnull (1, 2, 4), nothrow, warn_unused_result))
+__attribute__ ((nonnull (1, 2, 4), nothrow, warn_unused_result))
 static int rdcb (
 	void *restrict dest,
 	void const *restrict src,
@@ -41,7 +41,7 @@ static int rdcb (
 	return 0;
 }
 
-typedef __attribute__ ((nonnull (1, 2, 4), nothrow, warn_unused_result))
+__attribute__ ((nonnull (1, 2, 4), nothrow, warn_unused_result))
 static int wrcb (
 	void *restrict dest,
 	void const *restrict src,
