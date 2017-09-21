@@ -111,10 +111,10 @@ int threll (
 	for (i = 0; i != ncmd - 1; i++)
 		alloc_pipe (pipes + i, cmds[i].output_esz, cmds[i].output_n);
 		/*alloc_pipe (pipes + i, cmds[i + 1].input_esz, cmds[i + 1].input_n);*/
-	init_io (mid + 0, dest.in, pipes[0].q_in);
+	init_io (mid + 0, dest.in, pipes + 0);
 	for (i = 1; i != ncmd - 1 - 1; i++)
-		init_io (mid + i, pipes[i - 1].q_out, pipes[i].q_in);
-	init_io (mid + i, pipes[i - 1].q_out, dest.out);
+		init_io (mid + i, pipes + i - 1, pipes + i);
+	init_io (mid + i, pipes + i - 1, dest.out);
 
 	worker_thread = malloc (ncmd * sizeof (pthread_t));
 	worker_thread_cb_arg = malloc (ncmd * sizeof (worker_thread_cb_t));
