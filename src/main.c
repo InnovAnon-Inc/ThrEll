@@ -61,7 +61,8 @@ typedef struct {
 } rw_io_t;
 	#pragma GCC diagnostic pop
 
-void *rw_io_wrapper (void *restrict _arg) {
+__attribute__ ((nonnull (1), nothrow, warn_unused_result))
+static void *rw_io_wrapper (void *restrict _arg) {
 	rw_io_t *restrict arg = (rw_io_t *restrict) _arg;
 	error_check (rw_io (arg->io, arg->rd, arg->wr) != 0)
 		return NULL;
