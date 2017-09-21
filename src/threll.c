@@ -60,7 +60,7 @@ static int worker_thread_cb_cb (
    buffer_t *restrict buf_out,
    buffer_t const *restrict buf_in,
    void *restrict _arg) {
-   thrio_cb_t *restrict arg = (thrio_cb_t *restrict) _arg;
+   threll_cb_t *restrict arg = (threll_cb_t *restrict) _arg;
 
    TODO (init buf_out->n to out_bufsz below)
    error_check ((*arg) (buf_out->buf, buf_in->buf,
