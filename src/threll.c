@@ -166,7 +166,7 @@ int threll (
 
    /* join all workers */
    for (i = 0; i != ncmd; i++)
-		error_check (pthread_join (worker_thread, NULL) != 0) {
+		error_check (pthread_join (worker_thread[i], NULL) != 0) {
 	#pragma GCC diagnostic push
 	#pragma GCC diagnostic ignored "-Wunused-result"
 		(void) free_io (&dest);
@@ -174,7 +174,7 @@ int threll (
 		return -5;
 		}
 
-	free (mids);
+	free (mid);
 	free (pipes);
 	free (worker_thread);
 	free (worker_thread_cb_arg);
