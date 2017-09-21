@@ -35,27 +35,20 @@ int (*threll_cb_t) (
    void *restrict dest,
    void const *restrict src, size_t srcsz, size_t *restrict destsz) ;
 
+	#pragma GCC diagnostic push
+	#pragma GCC diagnostic ignored "-Wpadded"
 typedef struct {
    io_t *restrict io;
    fd_t in, out;
 } io_thread_cb_t;
-
-typedef struct {
-   io_t *restrict io;
-   threll_cb_t cb;
-} worker_thread_cb_t;
+	#pragma GCC diagnostic pop
 
 	#pragma GCC diagnostic push
 	#pragma GCC diagnostic ignored "-Wpadded"
 typedef struct {
-	threll_cb_t cb;
-	void *restrict arg;
-	pthread_t cpid;
-	size_t input_esz;
-	size_t input_n;
-	size_t output_esz;
-	size_t output_n;
-} pipeline_t;
+   io_t *restrict io;
+   threll_cb_t cb;
+} worker_thread_cb_t;
 	#pragma GCC diagnostic pop
 
 __attribute__ ((nonnull (3), nothrow, warn_unused_result))

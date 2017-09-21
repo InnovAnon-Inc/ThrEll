@@ -62,7 +62,7 @@ int (*pipeline_cb_t) (
 	#pragma GCC diagnostic push
 	#pragma GCC diagnostic ignored "-Wpadded"
 typedef struct {
-	pipeline_cb_t cb;
+	threll_cb_t cb;
 	void *restrict arg;
 	pthread_t cpid;
 	size_t input_esz;
