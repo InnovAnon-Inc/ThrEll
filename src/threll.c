@@ -109,10 +109,15 @@ static int command (
 	parentcb2_t pargs;
 
 	/*pipe_t *restrict pipettes = malloc (2 * sizeof (pipe_t));*/
-	pipe_t *restrict pipettes = malloc (sizeof (pipe_t));
+	io_t pipettes;
+	error_check (alloc_io (
+		&pipettes,
+		cmd->input_esz, cmd->input_n,
+		cmd->output_esz, cmd->output_n) != 0) return -1;
+	/*pipe_t *restrict pipettes = malloc (sizeof (pipe_t));
 	error_check (pipettes == NULL) {
 		return -1;
-	}
+	}*/
 	cargs = malloc (sizeof (childcommon_t));
 	error_check (cargs == NULL) {
 		free (pipettes);
@@ -127,12 +132,12 @@ static int command (
 		return -3;
 	threll_pipe (pipettes + 0, pipettes + 1, cmd->input_esz, cmd->input_n);*/
 
-	error_check (alloc_pipe (pipettes, cmd->output_esz, cmd->output_n) != 0) {
+	/*error_check (alloc_pipe (pipettes, cmd->output_esz, cmd->output_n) != 0) {*/
 	/*error_check (threll_pipe (pipettes + 0, pipettes + 1, cmd->output_esz, cmd->output_n) != 0) {*/
-		free (cargs);
+	/*	free (cargs);
 		free (pipettes);
 		return -3;
-	}
+	}*/
 	/*(void) pipe (pipettes);*/
 
 	cargs->first = first;
@@ -140,15 +145,19 @@ static int command (
 	cargs->input = *input;
 	/*cargs.rd = pipettes[0];
 	cargs.wr = pipettes[1];*/
-	cargs->rd = pipettes + 0;
-	cargs->wr = pipettes + 1;
+	/*cargs->rd = pipettes + 0;
+	cargs->wr = pipettes + 1;*/
+	cargs->rd = pipettes->in;
+	cargs->wr = pipettes->out;
 	cargs->cmd = cmd;
 
 	pargs.input = *input;
 	/*pargs.wr = pipettes[1];
 	pargs.rd = pipettes[0];*/
-	pargs.wr = pipettes + 1;
-	pargs.rd = pipettes + 0;
+	/*pargs.wr = pipettes + 1;
+	pargs.rd = pipettes + 0;*/
+	pargs.wr = pipettes->out;
+	pargs.rd = pipettes->in;
 	/*threll_cp (pargs.wr, pipettes + 1);
 	threll_cp (pargs.rd, pipettes + 0);*/
 	pargs.last = last;
@@ -179,8 +188,10 @@ static int command (
 /* TODO add void * param to cmds' siggy, and void * arg... closure-style */
 
 /* nargv is non-zero */
-__attribute__ ((nonnull (1), warn_unused_result))
-int pipeline (pipeline_t cmds[], size_t ncmd) {
+__attribute__ ((nonnull (1, 3, 4), warn_unused_result))
+int pipeline (
+	pipeline_t cmds[], size_t ncmd,
+	pipe_t *restrict rd, pipe_t *restrict wr) {
 	/*caq_t *input = STDIN_FILENO;*/
 	/*fd_t *input = &stdinput;*/
 	pipe_t *restrict input = NULL;
@@ -272,8 +283,10 @@ static int exec_pipelinecb (
 	return 0;
 }
 
-__attribute__ ((nonnull (1), warn_unused_result))
-int exec_pipeline (thserver_t argvs[], size_t nargv) {
+__attribute__ ((nonnull (1, 3, 4), warn_unused_result))
+int exec_pipeline (
+	thserver_t argvs[], size_t nargv,
+	pipe_t *restrict rd, pipe_t *restrict wr) {
 	pipeline_t *restrict cmds = malloc (nargv * sizeof (pipeline_t)
 	+ nargv * sizeof (exec_pipelinecb_t));
 	exec_pipelinecb_t *restrict tmps;
@@ -293,7 +306,7 @@ int exec_pipeline (thserver_t argvs[], size_t nargv) {
 		cmds[i].output_n = argvs[i].output_n;
 	}
 	/*puts ("exec_pipeline ()");*/
-	error_check (pipeline (cmds, nargv) != 0) {
+	error_check (pipeline (cmds, nargv, rd, wr) != 0) {
 		/*puts ("exec_pipeline failed");*/
 		return -2;
 	}

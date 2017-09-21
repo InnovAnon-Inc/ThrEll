@@ -44,11 +44,10 @@ typedef struct {
 } thserver_t;
 	#pragma GCC diagnostic pop
 
-int exec_pipeline (thserver_t *argvs, size_t nargv) ;
-
-int threll_close (pipe_t *fd) ;
-int threll_pipe (pipe_t *input, pipe_t *output, size_t esz, size_t n) ;
-void threll_cp (pipe_t *dest, pipe_t *src) ;
+int exec_pipeline (
+	thserver_t *restrict argvs, size_t nargv,
+	pipe_t *restrict rd, pipe_t *restrict wr)
+__attribute__ ((nonnull (1, 3, 4), nothrow, warn_unused_result)) ;
 
 typedef __attribute__ ((warn_unused_result))
 int (*pipeline_cb_t) (
@@ -71,11 +70,15 @@ typedef struct {
 } pipeline_t;
 	#pragma GCC diagnostic pop
 
-int pipeline (pipeline_t cmds[], size_t ncmd) ;
+int pipeline (
+	pipeline_t cmds[], size_t ncmd,
+	pipe_t *restrict rd, pipe_t *restrict wr)
+__attribute__ ((nonnull (1, 3, 4), nothrow, warn_unused_result)) ;
 
 int thserver (
 	pipe_t *restrict inq, pipe_t *restrict outq,
-	worker_io_cb_t cb) ;
+	worker_io_cb_t cb)
+__attribute__ ((nonnull (1, 2, 3), nothrow, warn_unused_result)) ;
 
 /* ---------- */
 
