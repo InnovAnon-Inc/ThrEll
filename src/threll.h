@@ -78,6 +78,13 @@ typedef struct {
 } pipeline_t;
 	#pragma GCC diagnostic pop
 
+int threll (
+   fd_t in, fd_t out,
+   pipeline_t cmds[],
+   size_t ncmd)
+__attribute__ ((nonnull (3), nothrow, warn_unused_result)) ;
+
+
 int pipeline (
 	pipeline_t cmds[], size_t ncmd,
 	pipe_t *restrict rd, pipe_t *restrict wr)
