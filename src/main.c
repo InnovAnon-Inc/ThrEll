@@ -26,7 +26,7 @@ static int cb (
 	void *restrict unused) {
 	/*output->x = (double) (input->x);*/
 	buf_out->n = min (buf_in->n, buf_out->n);
-	memcpy (dest, src, buf_out->n);
+	memcpy (buf_out, buf_in, buf_out->n);
 	return 0;
 }
 
