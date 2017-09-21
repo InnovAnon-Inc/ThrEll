@@ -62,6 +62,8 @@ static void *childcommon (void *restrict tmp) {
 	pipe_t *restrict input = arg->input;
 	pipe_t *restrict rd = arg->rd;
 	pipe_t *restrict wr = arg->wr;
+	pipe_t *restrict in = arg->in;
+	pipe_t *restrict out = arg->out;
 	pipeline_t *restrict cmd = arg->cmd;
 	pipeline_cb_t cb;
 	void *restrict cbarg;
@@ -70,7 +72,7 @@ static void *childcommon (void *restrict tmp) {
 	cbarg = cmd->arg;
 	#pragma GCC diagnostic push
 	#pragma GCC diagnostic ignored "-Wtraditional-conversion"
-	err = cb (input, rd, wr, first, last, cbarg);
+	err = cb (input, rd, wr, first, last, in, out, cbarg);
 	#pragma GCC diagnostic pop
 	error_check (err != 0) {
 		/*return -1;*/
