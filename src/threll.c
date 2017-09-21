@@ -49,6 +49,8 @@ typedef struct {
 	pipe_t *restrict rd;
 	pipe_t *restrict wr;
 	pipeline_t *restrict cmd;
+	pipe_t *restrict in;
+	pipe_t *restrict out;
 } childcommon_t;
 	#pragma GCC diagnostic pop
 
@@ -100,11 +102,12 @@ int ezthork (
 	return 0;
 }
 
-__attribute__ ((nonnull (1, 2), nothrow, warn_unused_result))
+__attribute__ ((nonnull (1, 2, 5, 6), nothrow, warn_unused_result))
 static int command (
 	pipeline_t *restrict cmd,
 	pipe_t *restrict *restrict input,
-	bool first, bool last) {
+	bool first, bool last,
+	pipe_t *restrict rd, pipe_t *restrict wr) {
 	childcommon_t *restrict cargs;
 	parentcb2_t pargs;
 
@@ -150,6 +153,8 @@ static int command (
 	cargs->rd = pipettes->in;
 	cargs->wr = pipettes->out;
 	cargs->cmd = cmd;
+	cargs->in = rd;
+	cargs->out = wr;
 
 	pargs.input = *input;
 	/*pargs.wr = pipettes[1];
@@ -201,14 +206,14 @@ int pipeline (
 	for (i = 0; i != ncmd - 1; i++) {
 	#pragma GCC diagnostic push
 	#pragma GCC diagnostic ignored "-Wtraditional-conversion"
-		error_check (command (cmds + i, &input, first, false) != 0)
+		error_check (command (cmds + i, &input, first, false, in, wr) != 0)
 	#pragma GCC diagnostic pop
 			return -1;
 		first = false;
 	}
 	#pragma GCC diagnostic push
 	#pragma GCC diagnostic ignored "-Wtraditional-conversion"
-	error_check (command (cmds + i, &input, first, true) != 0)
+	error_check (command (cmds + i, &input, first, true, in, wr) != 0)
 	#pragma GCC diagnostic pop
 		return -2;
 	for (i = 0; i != ncmd; i++) {
@@ -249,14 +254,17 @@ static int exec_pipelinecb (
 	pipe_t *restrict input,
 	pipe_t *restrict rd,
 	pipe_t *restrict wr,
-	bool first, bool last, void *cbargs) {
+	bool first, bool last,
+	pipe_t *restrict in,
+	pipe_t *restrict out,
+	void *cbargs) {
 	exec_pipelinecb_t *restrict args =
 		(exec_pipelinecb_t *restrict) cbargs;
 	worker_io_cb_t argv = args->argv;
 	io_t io;
 
-	pipe_t *restrict cmdinput = NULL;
-	pipe_t *restrict cmdoutput = NULL;
+	pipe_t *restrict cmdinput  = in;
+	pipe_t *restrict cmdoutput = out;
 
 	/*cb ();*/
 	/*if (first && ! last && input == STDIN_FILENO)*/ /* first command */

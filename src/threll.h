@@ -55,6 +55,8 @@ int (*pipeline_cb_t) (
 	pipe_t *restrict,
 	pipe_t *restrict,
 	bool, bool,
+	pipe_t *restrict,
+	pipe_t *restrict,
 	void *restrict);
 
 	#pragma GCC diagnostic push
