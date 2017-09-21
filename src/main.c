@@ -19,36 +19,36 @@ typedef struct {
 	double x;
 } output_t;
 
-__attribute__ ((nonnull (1, 2), nothrow, warn_unused_result))
+typedef __attribute__ ((nonnull (1, 2, 4), nothrow, warn_unused_result))
 static int cb (
-	buffer_t *restrict buf_out,
-	buffer_t const *restrict buf_in,
-	void *restrict unused) {
-	/*output->x = (double) (input->x);*/
-	buf_out->n = min (buf_in->n, buf_out->n);
-	memcpy (buf_out, buf_in, buf_out->n);
+	void *restrict dest,
+	void const *restrict src,
+	size_t srcsz,
+	size_t *restrict destsz) {
+	*destsz = min (srcsz, *destsz);
+	memcpy (dest, src, *destsz);
 	return 0;
 }
 
-__attribute__ ((nonnull (1, 2), nothrow, warn_unused_result))
+typedef __attribute__ ((nonnull (1, 2, 4), nothrow, warn_unused_result))
 static int rdcb (
-	buffer_t *restrict buf_out,
-	buffer_t const *restrict buf_in,
-	void *restrict arg) {
-	TODO (?)
-	buf_out->n = min (buf_in->n, buf_out->n);
-	memcpy (buf_out, buf_in, buf_out->n);
+	void *restrict dest,
+	void const *restrict src,
+	size_t srcsz,
+	size_t *restrict destsz) {
+	*destsz = min (srcsz, *destsz);
+	memcpy (dest, src, *destsz);
 	return 0;
 }
 
-__attribute__ ((nonnull (1, 2), nothrow, warn_unused_result))
+typedef __attribute__ ((nonnull (1, 2, 4), nothrow, warn_unused_result))
 static int wrcb (
-   buffer_t *restrict buf_out,
-   buffer_t const *restrict buf_in,
-   void *restrict arg) {
-	TODO (?)
-	buf_out->n = min (buf_in->n, buf_out->n);
-	memcpy (buf_out, buf_in, buf_out->n);
+	void *restrict dest,
+	void const *restrict src,
+	size_t srcsz,
+	size_t *restrict destsz) {
+	*destsz = min (srcsz, *destsz);
+	memcpy (dest, src, *destsz);
 	return 0;
 }
 
