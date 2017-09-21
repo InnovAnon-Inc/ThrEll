@@ -36,7 +36,7 @@ int exec_pipeline (thclosure_t *argvs, size_t nargv) ;
 	#pragma GCC diagnostic push
 	#pragma GCC diagnostic ignored "-Wpadded"
 typedef struct {
-	thservercb cb;
+	worker_io_cb_t cb;
 	size_t input_esz;
 	size_t output_esz;
 	size_t input_n;

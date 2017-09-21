@@ -119,6 +119,8 @@ int background (int (*cb) (void *), void *args) {
 
 /* ------------------------------------------ */
 
+	#pragma GCC diagnostic push
+	#pragma GCC diagnostic ignored "-Wpadded"
 typedef struct {
 	pipe_t *restrict input;
 	pipe_t *restrict wr;
@@ -126,6 +128,7 @@ typedef struct {
 	bool last;
 	pthread_t cpid;
 } parentcb2_t;
+	#pragma GCC diagnostic pop
 
 
 __attribute__ ((nonnull (2), nothrow, warn_unused_result))
@@ -146,7 +149,8 @@ static int parentcb (pthread_t cpid, void *restrict cbargs) {
 
 
 
-
+	#pragma GCC diagnostic push
+	#pragma GCC diagnostic ignored "-Wpadded"
 typedef struct {
 	bool first, last;
 	pipe_t *restrict input;
@@ -154,6 +158,7 @@ typedef struct {
 	pipe_t *restrict wr;
 	pipeline_t *restrict cmd;
 } childcommon_t;
+	#pragma GCC diagnostic pop
 
 __attribute__ ((nonnull (1), nothrow, warn_unused_result))
 static void *childcommon (void *restrict tmp) {
@@ -313,11 +318,13 @@ int ring (void) {
 /* web (): */
 
 
-
+	#pragma GCC diagnostic push
+	#pragma GCC diagnostic ignored "-Wpadded"
 typedef struct {
 	/*thclosure_t *argv;*/
 	worker_io_cb_t argv;
 } exec_pipelinecb_t;
+	#pragma GCC diagnostic pop
 
 __attribute__ ((nothrow, warn_unused_result))
 static int exec_pipelinecb (
