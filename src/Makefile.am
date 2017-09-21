@@ -1,14 +1,10 @@
 lib_LTLIBRARIES = libthrell.la
 libthrell_la_SOURCES = threll.c
-include_HEADERS	= threll.h
-#libthrell_la_CFLAGS =
-#libthrell_la_LDFLAGS = -lcaq -lpthread
-libthrell_la_LIBADD = -lcaq -lpthread
+include_HEADERS = threll.h
+libthrell_la_LIBADD = -lthipe -lrestart -ltscpaq -lcpaq -lpthread
 
 bin_PROGRAMS = threll-test
 threll_test_SOURCES = main.c
-threll_test_LDFLAGS = -lcaq -lpthread
-threll_test_LDADD = libthrell.la
-#threll_test_CFLAGS =
+threll_test_LDADD = libthrell.la -lthipe -lrestart -ltscpaq -lcpaq -lpthread
 
 AM_CPPFLAGS = -D__STDC_INT64__
