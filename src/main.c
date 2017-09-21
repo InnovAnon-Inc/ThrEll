@@ -76,12 +76,12 @@ int main (void) {
 	size_t in_nbuf  = 3;
 	size_t out_bufsz = 8;
 	size_t out_nbuf  = 2;
-	pthread_t io_thread;
+	/*pthread_t io_thread;
 	rw_io_t rw_io_arg;
 
 	io_t io;
 	error_check (alloc_io (&io, in_bufsz, in_nbuf, out_bufsz, out_nbuf) != 0)
-		return EXIT_FAILURE;
+		return EXIT_FAILURE;*/
 
 	argvs[0].cb = rdcb;
 	argvs[0].input_esz = in_bufsz;
@@ -101,16 +101,18 @@ int main (void) {
 	argvs[2].output_esz = out_bufsz;
 	argvs[2].output_n   = out_nbuf;
 
-	rw_io_arg.io = &io;
+	/*rw_io_arg.io = &io;
 	rw_io_arg.rd = STDIN_FILENO;
 	rw_io_arg.wr = STDOUT_FILENO;
 	error_check (pthread_create (
 		&io_thread, NULL, rw_io_wrapper, &rw_io_arg) != 0)
-		return EXIT_FAILURE;
+		return EXIT_FAILURE;*/
 
-	error_check (exec_pipeline (argvs, nargv, io.in, io.out) != 0) return EXIT_FAILURE;
+	error_check (threll (
+		STDIN_FILENO, STDOUT_FILENO,
+		argvs, nargv) != 0) return EXIT_FAILURE;
 
-	error_check (pthread_join (io_thread, NULL) != 0) return EXIT_FAILURE;
+	/*error_check (pthread_join (io_thread, NULL) != 0) return EXIT_FAILURE;*/
 
 	error_check (free_io (&io) != 0) return EXIT_FAILURE;
 
