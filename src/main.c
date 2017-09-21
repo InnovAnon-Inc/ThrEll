@@ -52,6 +52,7 @@ static int wrcb (
 	return 0;
 }
 
+/*
 	#pragma GCC diagnostic push
 	#pragma GCC diagnostic ignored "-Wpadded"
 typedef struct {
@@ -68,10 +69,11 @@ static void *rw_io_wrapper (void *restrict _arg) {
 		return NULL;
 	return NULL;
 }
+*/
 
 int main (void) {
 	size_t nargv = 3;
-	thserver_t argvs[3];
+	pipeline_t argvs[3];
 	size_t in_bufsz = 10;
 	size_t in_nbuf  = 3;
 	size_t out_bufsz = 8;
