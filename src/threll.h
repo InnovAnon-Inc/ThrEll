@@ -5,13 +5,12 @@
 extern "C" {
 #endif
 
-#include <stdbool.h>
 #include <sys/types.h>
 
 #include <pthread.h>
-#include <semaphore.h>
 
-#include <caq.h>
+#include <glitter.h>
+#include <io.h>
 
 /* exec_pipeline, exec_ring */
 
@@ -22,26 +21,6 @@ __attribute__ ((const)) ;
 
 /* ring, command, pipeline */
 
-typedef int (*thservercb) (void *, void *) ;
-
-#define FD_RD (1)
-#define FD_WR (2)
-#define IS_FD_RD(F) ((F)->type & FD_RD)
-#define IS_FD_WR(F) ((F)->type & FD_WR)
-
-typedef struct {
-	caq_t io;
-	size_t nreader;
-	size_t nwriter;
-	pthread_mutex_t mutex;
-	sem_t empty, full;
-	/*bool done;*/
-} pipe_t;
-
-typedef struct {
-	pipe_t *io;
-	int type;
-} fd_t;
 /*
 typedef struct {
 	int (*cb) (fd_t *input, fd_t *output, void *);
@@ -53,6 +32,9 @@ typedef struct {
 } thclosure_t;
 int exec_pipeline (thclosure_t *argvs, size_t nargv) ;
 */
+
+	#pragma GCC diagnostic push
+	#pragma GCC diagnostic ignored "-Wpadded"
 typedef struct {
 	thservercb cb;
 	size_t input_esz;
@@ -60,28 +42,40 @@ typedef struct {
 	size_t input_n;
 	size_t output_n;
 } thserver_t;
+	#pragma GCC diagnostic pop
 
 int exec_pipeline (thserver_t *argvs, size_t nargv) ;
 
-int threll_close (fd_t *fd) ;
-int threll_pipe (fd_t *input, fd_t *output, size_t esz, size_t n) ;
-void threll_cp (fd_t *dest, fd_t *src) ;
+int threll_close (pipe_t *fd) ;
+int threll_pipe (pipe_t *input, pipe_t *output, size_t esz, size_t n) ;
+void threll_cp (pipe_t *dest, pipe_t *src) ;
 
+typedef __attribute__ ((warn_unused_result))
+int (*pipeline_cb_t) (
+	pipe_t *restrict,
+	pipe_t *restrict,
+	pipe_t *restrict,
+	bool, bool,
+	void *restrict);
+
+	#pragma GCC diagnostic push
+	#pragma GCC diagnostic ignored "-Wpadded"
 typedef struct {
-	int (*cb) (fd_t *, fd_t *, fd_t *, bool, bool, void *);
-	void *arg;
+	pipeline_cb_t cb;
+	void *restrict arg;
 	pthread_t cpid;
 	size_t input_esz;
 	size_t input_n;
 	size_t output_esz;
 	size_t output_n;
 } pipeline_t;
+	#pragma GCC diagnostic pop
 
 int pipeline (pipeline_t cmds[], size_t ncmd) ;
 
 int thserver (
-	fd_t *inq, fd_t *outq,
-	thservercb cb) ;
+	pipe_t *restrict inq, pipe_t *restrict outq,
+	worker_io_cb_t cb) ;
 
 /* ---------- */
 
