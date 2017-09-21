@@ -40,6 +40,13 @@ typedef struct {
 } io_thread_cb_t;
 	#pragma GCC diagnostic pop
 
+__attribute__ ((nonnull (1), nothrow, warn_unused_result))
+static void *io_thread_cb (void *restrict _arg) {
+   io_thread_cb_t *restrict arg = (io_thread_cb_t *restrict) _arg;
+   error_check (rw_io (arg->io, arg->in, arg->out) != 0) return NULL;
+   return NULL;
+}
+
 	#pragma GCC diagnostic push
 	#pragma GCC diagnostic ignored "-Wpadded"
 typedef struct {
