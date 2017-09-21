@@ -155,8 +155,8 @@ static int command (
 	cargs.wr = pipettes[1];*/
 	/*cargs->rd = pipettes + 0;
 	cargs->wr = pipettes + 1;*/
-	cargs->rd = pipettes->in;
-	cargs->wr = pipettes->out;
+	cargs->rd = pipettes.in;
+	cargs->wr = pipettes.out;
 	cargs->cmd = cmd;
 	cargs->in = rd;
 	cargs->out = wr;
@@ -166,8 +166,8 @@ static int command (
 	pargs.rd = pipettes[0];*/
 	/*pargs.wr = pipettes + 1;
 	pargs.rd = pipettes + 0;*/
-	pargs.wr = pipettes->out;
-	pargs.rd = pipettes->in;
+	pargs.wr = pipettes.out;
+	pargs.rd = pipettes.in;
 	/*threll_cp (pargs.wr, pipettes + 1);
 	threll_cp (pargs.rd, pipettes + 0);*/
 	pargs.last = last;
