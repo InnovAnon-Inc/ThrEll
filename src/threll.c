@@ -215,14 +215,14 @@ int pipeline (
 	for (i = 0; i != ncmd - 1; i++) {
 	#pragma GCC diagnostic push
 	#pragma GCC diagnostic ignored "-Wtraditional-conversion"
-		error_check (command (cmds + i, &input, first, false, in, wr) != 0)
+		error_check (command (cmds + i, &input, first, false, rd, wr) != 0)
 	#pragma GCC diagnostic pop
 			return -1;
 		first = false;
 	}
 	#pragma GCC diagnostic push
 	#pragma GCC diagnostic ignored "-Wtraditional-conversion"
-	error_check (command (cmds + i, &input, first, true, in, wr) != 0)
+	error_check (command (cmds + i, &input, first, true, rd, wr) != 0)
 	#pragma GCC diagnostic pop
 		return -2;
 	for (i = 0; i != ncmd; i++) {
