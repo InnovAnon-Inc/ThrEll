@@ -74,10 +74,10 @@ static void *rw_io_wrapper (void *restrict _arg) {
 int main (void) {
 	size_t nargv = 3;
 	pipeline_t argvs[3];
-	size_t in_bufsz = 10;
-	size_t in_nbuf  = 3;
+	size_t in_bufsz  = /*10*/ 8;
+	size_t in_nbuf   = 3;
 	size_t out_bufsz = 8;
-	size_t out_nbuf  = 2;
+	size_t out_nbuf  = /*2*/  3;
 	/*pthread_t io_thread;
 	rw_io_t rw_io_arg;
 
@@ -88,13 +88,13 @@ int main (void) {
 	argvs[0].cb = rdcb;
 	argvs[0].input_esz = in_bufsz;
 	argvs[0].input_n   = in_nbuf;
-	argvs[0].output_esz = sizeof (int);
-	argvs[0].output_n   = 2;
+	argvs[0].output_esz = /*sizeof (int)*/ 8;
+	argvs[0].output_n   = /*2*/            3;
 
 	argvs[1].cb = cb;
 	argvs[1].input_esz = argvs[0].output_esz;
 	argvs[1].input_n   = argvs[0].output_n;
-	argvs[1].output_esz = sizeof (double);
+	argvs[1].output_esz = /*sizeof (double)*/ 8;
 	argvs[1].output_n   = 3;
 
 	argvs[2].cb = wrcb;
