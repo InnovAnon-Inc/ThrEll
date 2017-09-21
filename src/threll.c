@@ -55,6 +55,30 @@ typedef struct {
 } worker_thread_cb_t;
 	#pragma GCC diagnostic pop
 
+__attribute__ ((nonnull (1, 2), nothrow, warn_unused_result))
+static int worker_thread_cb_cb (
+   buffer_t *restrict buf_out,
+   buffer_t const *restrict buf_in,
+   void *restrict _arg) {
+   thrio_cb_t *restrict arg = (thrio_cb_t *restrict) _arg;
+
+   TODO (init buf_out->n to out_bufsz below)
+   error_check ((*arg) (buf_out->buf, buf_in->buf,
+      buf_in->n, &(buf_out->n)) != 0)
+      return -1;
+   return 0;
+}
+
+__attribute__ ((nonnull (1), nothrow, warn_unused_result))
+static void *worker_thread_cb (void *restrict _arg) {
+   /*io_t *restrict arg = (io_t *restrict) _arg;*/
+   worker_thread_cb_t *restrict arg =
+      (worker_thread_cb_t *restrict) _arg;
+   error_check (worker_io (arg->io, worker_thread_cb_cb, &(arg->cb)) != 0)
+      return NULL;
+   return NULL;
+}
+
 __attribute__ ((nonnull (3), nothrow, warn_unused_result))
 int threll (
    fd_t in, fd_t out,
