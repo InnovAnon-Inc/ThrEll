@@ -183,11 +183,15 @@ static void *childcommon (void *restrict tmp) {
 		return NULL;
 	}
 	/*if (rd != &stdinput)*/
-	error_check (rd != NULL)
-		threll_close (rd);
+	error_check (rd != NULL) {
+		TODO (close here)
+		/*threll_close (rd);*/
+	}
 	/*if (wr != &stdoutput)*/
-	error_check (wr != NULL)
-		threll_close (wr);
+	error_check (wr != NULL) {
+		TODO (close here)
+		/*threll_close (wr);*/
+	}
 	/*return 0;*/
 	return NULL;
 }
@@ -212,7 +216,8 @@ static int command (
 	childcommon_t *restrict cargs;
 	parentcb2_t pargs;
 
-	pipe_t *restrict pipettes = malloc (2 * sizeof (pipe_t));
+	/*pipe_t *restrict pipettes = malloc (2 * sizeof (pipe_t));*/
+	pipe_t *restrict pipettes = malloc (sizeof (pipe_t));
 	error_check (pipettes == NULL) {
 		return -1;
 	}
@@ -229,8 +234,9 @@ static int command (
 	if (cmd->input_n != cmd->output_n)
 		return -3;
 	threll_pipe (pipettes + 0, pipettes + 1, cmd->input_esz, cmd->input_n);*/
-	TODO (threll_pipe() is deprecated)
-	error_check (threll_pipe (pipettes + 0, pipettes + 1, cmd->output_esz, cmd->output_n) != 0) {
+
+	error_check (alloc_pipe (pipettes, cmd->output_esz, cmd->output_n) != 0) {
+	/*error_check (threll_pipe (pipettes + 0, pipettes + 1, cmd->output_esz, cmd->output_n) != 0) {*/
 		free (cargs);
 		free (pipettes);
 		return -3;
