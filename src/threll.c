@@ -133,7 +133,7 @@ int threll (
 
 
 	init_io (mid + 0, dest.in, pipes + 0);
-	for (i = 1; i != ncmd - 1 - 1; i++)
+	for (i = 1; i != ncmd - 1; i++)
 		init_io (mid + i, pipes + i - 1, pipes + i);
 	init_io (mid + i, pipes + i - 1, dest.out);
 
