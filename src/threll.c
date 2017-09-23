@@ -133,10 +133,12 @@ int threll (
 
 
 	init_io (mid + 0, dest.in, pipes + 0);
+	#pragma GCC ivdep
 	for (i = 1; i != ncmd - 1; i++)
 		init_io (mid + i, pipes + i - 1, pipes + i);
 	init_io (mid + i, pipes + i - 1, dest.out);
 
+	#pragma GCC ivdep
 	for (i = 0; i != ncmd - 1; i++)
 		error_check (alloc_pipe (pipes + i, cmds[i].output_esz, cmds[i].output_n) != 0) {
 			return -3;
@@ -151,6 +153,7 @@ int threll (
 	error_check (worker_thread_cb_arg == NULL) {
 		return -4;
 	}
+	#pragma GCC ivdep
 	for (i = 0; i != ncmd; i++) {
 		worker_thread_cb_arg[i].io = mid + i;
 		worker_thread_cb_arg[i].cb = cmds[i].cb;
@@ -174,6 +177,7 @@ int threll (
    }
 
    /* join all workers */
+	#pragma GCC ivdep
    for (i = 0; i != ncmd; i++)
 		error_check (pthread_join (worker_thread[i], NULL) != 0) {
 	#pragma GCC diagnostic push
