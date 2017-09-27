@@ -7,4 +7,7 @@ bin_PROGRAMS = threll
 threll_SOURCES = main.c
 threll_LDADD = libthrell.la -lthipe -lrestart -ltscpaq -lcpaq -lpthread
 
-AM_CPPFLAGS += -D__STDC_INT64__
+AM_CPPFLAGS = -D__STDC_INT64__
+AM_CPPFLAGS += -I $(srcdir)/../glitter/src
+AM_CPPFLAGS += -I $(srcdir)/../TSCPAQ/src
+AM_CPPFLAGS += -I $(srcdir)/../ThIpe/src
