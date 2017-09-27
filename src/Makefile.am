@@ -7,4 +7,4 @@ bin_PROGRAMS = threll
 threll_SOURCES = main.c
 threll_LDADD = libthrell.la -lthipe -lrestart -ltscpaq -lcpaq -lpthread
 
-AM_CPPFLAGS = -D__STDC_INT64__
+AM_CPPFLAGS += -D__STDC_INT64__
