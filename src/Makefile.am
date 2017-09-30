@@ -1,13 +1,20 @@
-lib_LTLIBRARIES = libthrell.la
-libthrell_la_SOURCES = threll.c
-include_HEADERS = threll.h
-libthrell_la_LIBADD = -lthipe -lrestart -ltscpaq -lcpaq -lpthread
+LIBTHRELL_LIBADD = ../ThIpe/src/.libs/libthipe.la $(LIBTHIPE_LIBADD)
+#LIBTHRELL_LIBADD += -lrestart -ltscpaq -lcpaq -lpthread
 
-bin_PROGRAMS = threll
-threll_SOURCES = main.c
-threll_LDADD = libthrell.la -lthipe -lrestart -ltscpaq -lcpaq -lpthread
+lib_LTLIBRARIES = libthrell.la
+include_HEADERS = threll.h
+libthrell_la_LIBADD = $(LIBTHRELL_LIBADD)
+
+bin_PROGRAMS = threll-test
+threll_test_LDADD = libthrell.la $(LIBTHRELL_LIBADD)
 
 AM_CPPFLAGS = -D__STDC_INT64__
-AM_CPPFLAGS += -I $(srcdir)/../glitter/src
-AM_CPPFLAGS += -I $(srcdir)/../TSCPAQ/src
-AM_CPPFLAGS += -I $(srcdir)/../ThIpe/src
+
+SUBDIRS = ../glitter
+AM_CPPFLAGS += -I ../glitter/src
+
+SUBDIRS += ../TSCPAQ
+AM_CPPFLAGS += -I ../TSCPAQ/src
+
+SUBDIRS += ThIpe
+AM_CPPFLAGS += -I ../ThIpe/src
