@@ -9,8 +9,7 @@ AM_CPPFLAGS += -I $(top_srcdir)/TSCPAQ/src
 SUBDIRS += ThIpe
 AM_CPPFLAGS += -I $(top_srcdir)/ThIpe/src
 
-LIBTHRELL_LIBADD = ../ThIpe/src/.libs/libthipe.la $(LIBTHIPE_LIBADD)
-#LIBTHRELL_LIBADD += -lrestart -ltscpaq -lcpaq -lpthread
+include Makefile-LIBADD.inc
 
 lib_LTLIBRARIES = libthrell.la
 include_HEADERS = threll.h
