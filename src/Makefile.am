@@ -7,7 +7,7 @@ AM_CPPFLAGS += -I $(top_srcdir)/glitter/src
 SUBDIRS += ../TSCPAQ
 AM_CPPFLAGS += -I $(top_srcdir)/TSCPAQ/src
 
-SUBDIRS += ThIpe
+SUBDIRS += ../ThIpe
 AM_CPPFLAGS += -I $(top_srcdir)/ThIpe/src
 endif
 
