@@ -15,7 +15,7 @@ AC_ARG_ENABLE([use-submodules],
 AM_CONDITIONAL([USE_SUBMODULES], [test x"$enable_use_submodules" = "xyes"])
 
 AC_CONFIG_MACRO_DIR([m4])
-AC_CONFIG_SUBDIRS([glitter TSCPAQ ThIpe])
+#AC_CONFIG_SUBDIRS([glitter TSCPAQ ThIpe])
 
 #AC_CHECK_LIB([pthread],[pthread_mutex_init,pthread_mutex_lock,pthread_mutex_unlock])
 #AC_CHECK_LIB([caq],[init_queue,alloc_queue,free_queue,enqueue,dequeue,isempty,isfull,gethead,dumpq])
