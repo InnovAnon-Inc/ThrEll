@@ -2,5 +2,5 @@
 set -eu
 [ $# -eq 1 ]
 [ $1 == --libs ]
-libthrell_config --libs
+echo -lthrell `libthrell_config --libs`
 
