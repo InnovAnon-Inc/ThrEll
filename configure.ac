@@ -30,12 +30,14 @@ AC_CHECK_LIB([tscpaq],[tscpaq_enqueue,tscpaq_dequeue])
 AC_CHECK_LIB([io],[alloc_io,free_io])
 #AC_CHECK_LIB([restart],[r_close])
 
-srcdir = @srcdir@
-LIBTHRELL_LIBADD="`PATH=$(srcdir)src:$PATH libthrell_config --libs`"
+#srcdir = @srcdir@
+#LIBTHRELL_LIBADD="`PATH=$(srcdir)src:$PATH libthrell_config --libs`"
+LIBTHRELL_LIBADD="`PATH=src:$PATH libthrell_config --libs`"
 AC_SUBST(LIBTHRELL_LIBADD)
 
 #THRELL_TEST_LIBADD="libthrell.la `PATH=src:$PATH threll_test_config --libs`"
-THRELL_TEST_LIBADD="`PATH=$(srcdir)src:$PATH threll_test_config --libs`"
+#THRELL_TEST_LIBADD="`PATH=$(srcdir)src:$PATH threll_test_config --libs`"
+THRELL_TEST_LIBADD="`PATH=src:$PATH threll_test_config --libs`"
 AC_SUBST(THRELL_TEST_LIBADD)
 
 INNOVANON_WARNINGS([])
