@@ -8,7 +8,8 @@ includedir=@includedir@
 Name: @PACKAGE_NAME@
 Description: threll library
 Version: @PACKAGE_VERSION@
-Libs: -L${libdir} -lthrell
+#Libs: -L${libdir} -lthrell -lm
+Libs: -L${libdir} -lthrell @M_CFLAGS@ @M_LIBS@
 Cflags: -I${includedir}
 Requires: glitter libio libpipe
 Requires.private:
